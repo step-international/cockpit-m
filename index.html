@@ -1,0 +1,1943 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wWtqIwUwx+swJCO/Wgj1n9lOoQcaSgDF83NQKzVY7T4='; style-src 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://ntfy.sh https://api.github.com https://raw.githubusercontent.com; frame-src https://business.facebook.com https://www.facebook.com; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Esteban Shopify">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-v-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Esteban Shopify</title>
+<style>
+:root {
+  --bg: #f5f5f7; --card: #fff; --soft: #ececf0; --line: #e5e5ea; --text: #1d1d1f; --muted: #6e6e73; --faint: #aeaeb2;
+  --green: #1f9d55; --orange: #c46f00; --red: #d0342c; --blue: #0a66d8;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.06);
+  --cvL: 42%;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #000; --card: #1c1c1e; --soft: #2c2c2e; --line: #2c2c2e; --text: #f5f5f7; --muted: #98989d; --faint: #5a5a5f;
+    --green: #30d158; --orange: #ff9f0a; --red: #ff453a; --blue: #0a84ff; --shadow: none; --cvL: 60%; }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.35 var(--font); -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; overscroll-behavior-x: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.wrap { max-width: 520px; margin: 0 auto; padding: calc(36px + env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom)); }
+.green { color: var(--green); } .orange { color: var(--orange); } .red { color: var(--red); } .blue { color: var(--blue); } .muted { color: var(--muted); }
+
+/* sélecteur de période */
+.seg { position: sticky; top: calc(10px + env(safe-area-inset-top)); z-index: 5; display: grid; grid-template-columns: 1.45fr 1fr 1fr 1fr 1fr; background: var(--soft); border-radius: 12px; padding: 3px; margin-top: 0; }
+.seg button { height: 34px; border-radius: 9px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.seg button.on { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+/* navigation jour / période */
+.nav { display: flex; align-items: center; justify-content: space-between; margin: 18px 2px 4px; }
+.nav .t { text-align: center; flex: 1; }
+.nav .t b { display: block; font-size: 22px; font-weight: 750; letter-spacing: -.01em; }
+.nav .t span { font-size: 13px; color: var(--muted); }
+.arrow { width: 40px; height: 40px; border-radius: 50%; font-size: 24px; color: var(--muted); display: grid; place-items: center; }
+.arrow:disabled { opacity: .2; }
+
+.stage { touch-action: pan-y; }
+.slide-l { animation: sl .22s ease-out; } .slide-r { animation: sr .22s ease-out; }
+@keyframes sl { from { transform: translateX(40px); opacity: 0; } } @keyframes sr { from { transform: translateX(-40px); opacity: 0; } }
+
+/* carte */
+.card { background: var(--card); border-radius: 22px; box-shadow: var(--shadow); padding: 18px; margin-top: 12px; }
+.head { display: flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; background: var(--faint); }
+.bg-green { background: var(--green); } .bg-orange { background: var(--orange); } .bg-red { background: var(--red); } .bg-blue { background: var(--blue); }
+.name { font-weight: 700; font-size: 15px; letter-spacing: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flag { flex: none; margin-left: 5px; font-size: 14px; line-height: 1; }
+.st-h { margin: 16px 0 6px; font-size: 15px; } .st-l { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.45; color: var(--muted); } .st-l li { margin-bottom: 6px; } .st-l b { color: var(--text); }   /* feuille Stratégie */
+.att-note { margin: 10px 0 2px; font-size: 13px; line-height: 1.4; color: var(--muted); background: var(--soft); border-radius: 12px; padding: 10px 12px; }   /* ventes Shopify pas reliées à une pub par Meta */
+.lt { flex: none; margin-left: 4px; font-size: 11px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }   /* heure du pays de la boutique */   /* drapeau du pays après le nom, comme les conversations */
+.sp { flex: 1; }
+.pill { font-size: 13px; font-weight: 650; padding: 3px 9px; border-radius: 99px; background: var(--soft); white-space: nowrap; }
+.todo { font-size: 14px; font-weight: 600; margin-top: 10px; }
+.big { font-size: 44px; font-weight: 780; letter-spacing: -.035em; line-height: 1; margin-top: 12px; }
+.line { display: flex; gap: 8px; margin-top: 10px; font-size: 14px; }
+.line span { color: var(--muted); font-size: 13px; display: block; }
+.line div { flex: 1; font-weight: 650; white-space: nowrap; min-width: 0; }
+.bars { position: relative; display: flex; gap: 3px; height: 64px; margin-top: 16px; }
+.bars .c { position: relative; flex: 1; }
+.bars .c i { position: absolute; left: 0; right: 0; display: block; border-radius: 4px; }
+.bars .zero { position: absolute; left: 0; right: 0; height: 1px; background: var(--line); }
+.cmp { font-size: 13px; color: var(--muted); margin-top: 8px; }
+.total { background: transparent; box-shadow: none; padding: 6px 4px 0; }
+.empty { color: var(--muted); margin-top: 12px; font-size: 15px; }
+.foot { color: var(--faint); font-size: 12px; text-align: center; margin-top: 20px; }
+.upd { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--muted); margin: 0 0 12px; }
+.upd .live { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(48, 209, 88, .18); }
+.rf { width: 34px; height: 34px; border-radius: 50%; background: var(--soft); color: var(--text); font-size: 18px; line-height: 34px; text-align: center; margin-left: 4px; }
+.rf.spin { animation: spin .8s linear infinite; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 99px; font-size: 14px; font-weight: 600; z-index: 50; white-space: nowrap; animation: up .2s ease-out; }
+@keyframes up { from { opacity: 0; transform: translate(-50%, 8px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* écran du code */
+.lock { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; }
+.lock h1 { font-size: 32px; margin: 0; }
+.lock input { width: 100%; height: 54px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: 600 20px var(--font); padding: 0 16px; letter-spacing: .06em; margin-top: 18px; }
+.btn { width: 100%; height: 52px; border-radius: 14px; background: var(--text); color: var(--bg); font-weight: 650; font-size: 17px; margin-top: 12px; }
+.err { color: var(--red); font-size: 14px; margin-top: 10px; min-height: 20px; }
+.link { color: var(--faint); font-size: 12px; margin-top: 8px; text-decoration: underline; }
+
+
+/* Pubs Meta : bouton entouré bleu Meta + feuille « Pubs par ensemble » */
+.pubbtn { border: 1.5px solid #0866ff; border-radius: 10px; padding: 1px 6px 2px; margin: -3px 0 0 -7px; text-align: left; font: inherit; color: inherit; }
+.pubbtn span { color: #0866ff !important; }
+.sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 60; animation: fade .15s ease-out; }
+@keyframes fade { from { opacity: 0; } }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow-y: auto; background: var(--bg); border-radius: 22px 22px 0 0; z-index: 61; padding: 10px 16px calc(24px + env(safe-area-inset-bottom)); animation: rise .22s ease-out; -webkit-overflow-scrolling: touch; }
+@keyframes rise { from { transform: translateY(40px); } }
+.sheet .grab { width: 38px; height: 5px; border-radius: 3px; background: var(--faint); margin: 0 auto 12px; opacity: .6; }
+.sheet h2 { font-size: 20px; margin: 0; letter-spacing: -.01em; }
+.sheet .x { position: absolute; right: 14px; top: 12px; width: 32px; height: 32px; border-radius: 50%; background: var(--soft); font-size: 18px; color: var(--muted); }
+.adset { margin-top: 10px; }
+.adset > summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 14px 14px; background: var(--card); border-radius: 16px; cursor: pointer; }
+.adset > summary::-webkit-details-marker { display: none; }
+.adset > summary .t { flex: 1; min-width: 0; }
+.adset > summary .t b { display: block; font-size: 15px; }
+.adset > summary .t small { color: var(--muted); font-size: 12px; }
+.adset > summary .v { font-weight: 780; font-size: 18px; white-space: nowrap; }
+.adset > summary .chev { color: var(--muted); font-size: 18px; transition: transform .15s; }
+.adset[open] > summary .chev { transform: rotate(90deg); }
+.adset[open] > summary { border-radius: 16px 16px 6px 6px; }
+.adrow { display: flex; align-items: center; gap: 12px; padding: 9px 10px; background: var(--card); border-radius: 14px; margin-top: 6px; text-decoration: none; color: inherit; }
+.adrow img, .adrow .ph { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; background: var(--soft); flex: none; }
+.adrow .nm { flex: 1; min-width: 0; font-size: 14px; }
+.adrow .nm b { font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.adrow .nm small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.adrow .sp2 { font-weight: 750; font-size: 16px; white-space: nowrap; }
+.adrow.zero { opacity: .55; }
+button.adrow { width: 100%; border: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.player { position: fixed; inset: 0; z-index: 70; background: #000; display: flex; flex-direction: column; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); animation: fade .15s ease-out; }
+.player-h { display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: #fff; }
+.player-h b { flex: 1; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.player-h .x { position: static; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.15); color: #fff; font-size: 20px; }
+.player-f { position: relative; flex: 1; display: flex; justify-content: center; overflow: auto; -webkit-overflow-scrolling: touch; }
+.player-f iframe { position: relative; width: min(100%, 420px); height: 100%; min-height: 640px; border: 0; background: #fff; opacity: 0; transition: opacity .2s; }
+.player-f iframe.ok { opacity: 1; }
+.player-wait { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.6); font-size: 15px; }
+
+/* Chat Claude : bulle sur chaque boutique → vue plein écran qui suit le clavier de l'iPhone */
+.cbtn { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 9px; white-space: nowrap; flex: none; border-radius: 99px; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #d97757, #c15f3c); }
+.lv { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; color: var(--green); margin-left: 2px; flex: none; }
+.lv i { position: relative; width: 8px; height: 8px; border-radius: 50%; background: #29c467; }
+.lv i::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #29c467; animation: livepulse 1.8s ease-out infinite; }
+@keyframes livepulse { 0% { transform: scale(1); opacity: .65; } 100% { transform: scale(3); opacity: 0; } }
+/* Changements programmés : à droite du total, liste complète en feuille */
+.toprow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: stretch; margin-top: 12px; }
+.toprow > .card { margin-top: 0; }
+.toprow.solo { grid-template-columns: minmax(0, 1fr); }
+.sched-box { padding: 12px 12px 10px; border-radius: 18px; background: var(--card); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; min-width: 0; text-align: left; font: inherit; color: inherit; width: 100%; }
+.sched-box .sh { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.sched-box .sh b { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: rgba(10,132,255,.14); color: var(--blue); font-size: 12px; display: grid; place-items: center; letter-spacing: 0; }
+.lots { font-size: 13px; margin: 6px 0 2px; color: var(--muted); }
+.lots.green b { color: #29c467; } .lots.orange b { color: #ff9f0a; } .lots.red { color: #ff453a; font-weight: 650; }
+.sched-box .more { font-size: 13px; font-weight: 650; color: var(--blue); margin-top: auto; }
+/* plusieurs changements : cartes côte à côte, on glisse vers la droite (06/11) ; la suivante dépasse pour le montrer */
+.sched-strip { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; min-width: 0; padding-bottom: 2px; }
+.sched-strip::-webkit-scrollbar { display: none; }
+.sched-strip > .sched-box { flex: 0 0 100%; scroll-snap-align: start; }
+.sched-strip.multi > .sched-box { flex-basis: calc(100% - 46px); }
+.srow { display: flex; gap: 8px; align-items: flex-start; min-width: 0; }
+.srow .t { flex: none; min-width: 46px; text-align: center; padding: 3px 4px; border-radius: 8px; background: rgba(10,132,255,.14); color: var(--blue); line-height: 1.1; }
+.srow .t b { display: block; font-size: 14px; } .srow .t small { font-size: 10px; }
+.srow .w { min-width: 0; font-size: 13px; line-height: 1.3; }
+.srow .w span { display: block; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+.srow .w div { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sheet .srow { padding: 10px 12px; background: var(--card); border-radius: 14px; margin-top: 8px; }
+.sheet .srow .w div { -webkit-line-clamp: unset; }
+.ubar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--muted); margin: -4px 0 12px; }
+.ubar b { color: var(--text); }
+.ubar i, .uchip i { display: block; width: 64px; height: 5px; border-radius: 3px; background: var(--soft); overflow: hidden; }
+.ubar i em, .uchip i em { display: block; height: 100%; border-radius: 3px; }
+html.chat-open, html.chat-open body { overflow: hidden; height: 100%; }
+.chat-v { position: fixed; left: 0; right: 0; top: 0; height: 100vh; z-index: 80; background: var(--bg); display: flex; flex-direction: column; }
+.cv-h { display: flex; align-items: center; gap: 8px; padding: calc(env(safe-area-inset-top) + 16px) 14px 10px 6px; border-bottom: 1px solid var(--line); }   /* fond sous la barre d'état, ‹ bien sous la Dynamic Island (21/10) */
+.cv-back { width: 40px; height: 40px; font-size: 34px; line-height: 36px; color: var(--blue); flex: none; }
+.cv-t { flex: 1; min-width: 0; }
+.cv-t b { display: block; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cv-t small { color: var(--muted); font-size: 12px; }
+.uchip { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 11px; color: var(--muted); }
+.uchip span b { font-size: 15px; margin-left: 4px; }
+.cv-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 14px 12px 6px; }
+.m { display: flex; flex-direction: column; margin-bottom: 10px; }
+.m.me { align-items: flex-end; } .m.ai { align-items: flex-start; }
+.m .b { max-width: 86%; padding: 9px 14px; border-radius: 20px; font-size: 16px; line-height: 1.42; overflow-wrap: anywhere; }
+.m.me .b { background: var(--blue); color: #fff; border-bottom-right-radius: 6px; white-space: pre-wrap; }
+.m.ai .b { background: var(--card); border-bottom-left-radius: 6px; box-shadow: var(--shadow); }
+.m .st { font-size: 11px; color: var(--muted); margin: 3px 6px 0; }
+.m.err { align-items: center; text-align: center; color: var(--red); font-size: 14px; padding: 0 16px; }
+.m.note { align-items: center; text-align: center; color: var(--muted); font-size: 14px; padding: 24px 16px; }
+.md p { margin: 0 0 6px; } .md p:last-child { margin-bottom: 0; }
+.md p.h { font-weight: 700; margin-top: 8px; }
+.md p.row { font-size: 14px; color: var(--muted); }
+.md ul, .md ol { margin: 2px 0 6px; padding-left: 20px; } .md li { margin: 2px 0; }
+.md code { font: 14px ui-monospace, Menlo, monospace; background: var(--soft); padding: 1px 5px; border-radius: 5px; }
+.md pre { font: 13px/1.4 ui-monospace, Menlo, monospace; background: var(--soft); padding: 8px 10px; border-radius: 10px; overflow-x: auto; margin: 6px 0; }
+.md .act { margin: 6px 0; padding: 8px 10px; border-radius: 12px; background: var(--soft); font-weight: 650; font-size: 14px; }
+.md .act small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; }
+.typing { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+.dots { display: inline-flex; gap: 4px; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite; }
+.dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+.cv-in { display: flex; align-items: flex-end; gap: 8px; padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--bg); }
+.chat-v.kb .cv-in { padding-bottom: 8px; }   /* clavier ouvert : pas de marge de la barre d'accueil */
+.cv-in textarea { flex: 1; resize: none; min-height: 40px; max-height: 132px; border-radius: 20px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: 16px/1.35 var(--font); padding: 9px 14px; outline: none; }
+.cv-in button { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 20px; font-weight: 700; }
+.cv-in button:disabled { opacity: .35; }
+.cv-screen { max-width: 400px; margin: 0 auto; padding: 28px 8px; text-align: center; }
+.cv-screen .ico { font-size: 40px; }
+.cv-screen h3 { margin: 8px 0 6px; font-size: 20px; }
+.cv-screen p { color: var(--muted); font-size: 15px; margin: 0 0 16px; }
+.cv-screen input { width: 100%; height: 54px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: 700 26px var(--font); letter-spacing: .3em; text-align: center; margin: 12px 0 0; }
+.cv-screen .btn.soft { background: var(--soft); color: var(--text); }
+
+/* ---------- Apparence Liquid Glass (comme sur le Mac) ---------- */
+:root {
+  --glass: linear-gradient(180deg, rgba(255,255,255,.66), rgba(255,255,255,.46));
+  --glass-strong: rgba(250,250,253,.86);
+  --glass-edge: inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 0 1px rgba(255,255,255,.55);
+  --wall: radial-gradient(80% 40% at 0% 0%, rgba(140,155,200,.22), transparent 70%), radial-gradient(80% 40% at 100% 100%, rgba(150,140,190,.16), transparent 70%), #e8e9ee;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glass: linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05));
+    --glass-strong: rgba(26,28,40,.82);
+    --glass-edge: inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 0 1px rgba(255,255,255,.07);
+    --wall: radial-gradient(80% 40% at 0% 0%, rgba(70,85,150,.16), transparent 72%), radial-gradient(80% 40% at 100% 100%, rgba(80,70,140,.11), transparent 72%), #050608;
+    --soft: rgba(255,255,255,.1); --line: rgba(255,255,255,.1);
+  }
+}
+html, body { background: transparent; }
+body::before { content: ''; position: fixed; inset: 0; z-index: -1; background: var(--wall); }
+.card:not(.total), .sched-box { background: var(--glass); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: var(--glass-edge), 0 12px 34px -14px rgba(0,0,0,.45); }
+.seg { background: var(--glass); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: var(--glass-edge); border-radius: 999px; padding: 4px; }
+.seg button { border-radius: 999px; }
+.seg button.on { background: rgba(255,255,255,.22); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.pill, .rf { box-shadow: inset 0 1px 0 rgba(255,255,255,.14); }
+.btn { border-radius: 999px; }
+.sheet { background: var(--glass-strong); -webkit-backdrop-filter: blur(40px) saturate(180%); backdrop-filter: blur(40px) saturate(180%); box-shadow: var(--glass-edge); }
+.sheet .srow, .adset > summary, .adrow { background: rgba(255,255,255,.07); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.chat-v { background: transparent; }
+.chat-v::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--wall); }
+.cv-h, .cv-in { background: var(--glass); -webkit-backdrop-filter: blur(30px) saturate(190%); backdrop-filter: blur(30px) saturate(190%); border-color: rgba(255,255,255,.08); }
+.m.ai .b { background: var(--glass); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); box-shadow: var(--glass-edge); }
+.m.me .b { box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 6px 16px -8px rgba(10,132,255,.8); }
+.cv-in textarea, .cv-screen input, .lock input { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
+.cbtn { box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 6px 16px -8px rgba(217,119,87,.8); }
+
+/* stats des pubs (21/10) : pastille sur « Pub », 6 cases colorées en haut de la liste, ligne CPC · CTR · CPM par pub */
+.pubbtn .pd { display: inline-block; width: 7px; height: 7px; margin-left: 4px; border-radius: 50%; vertical-align: 1px; }
+.kp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.kp .k { min-width: 0; padding: 10px 11px 9px; border-radius: 14px; background: rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
+.kp .k span { display: block; font-size: 12px; font-weight: 650; color: var(--muted); white-space: nowrap; }   /* « Pub / commande » sur une ligne (déborde dans la marge de la case plutôt que de décaler la valeur) */
+.kp .k b { display: block; margin-top: 2px; font-size: 19px; font-weight: 760; letter-spacing: -.01em; white-space: nowrap; }
+.kp .k small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-top: 1px; font-size: 11px; line-height: 1.25; color: var(--faint); overflow: hidden; }   /* repère sur 2 lignes (« pas encore de commande » ne tient pas sur une) */
+.kp-l { margin: 8px 2px 2px; font-size: 11.5px; color: var(--faint); }
+.adrow .nm .st, .adset > summary .t .st { display: block; margin-top: 2px; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adrow .nm .st b, .adset > summary .t .st b { display: inline; font-size: inherit; font-weight: 650; -webkit-line-clamp: unset; overflow: visible; }   /* pas le style du nom de la pub */
+/* logo de l'app Claude (22/10) : l'étoile de l'icône officielle (Claude.app), en masque → prend la couleur du bouton */
+.cl-ico { display: inline-block; flex: none; width: 1.05em; height: 1.05em; background: currentColor; -webkit-mask: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAaLUlEQVR42u1de7hd45n/rbX3OSIXkiA0GolIGiFIxi0qkrq2VM0Yl1GXlmdoUeMybjWqRRVl0NHSUmWqBE8N0nEZdDLqEkokIYiUELlKIhEJSU723uudP773bd5+1uVbl305J2c9z3r2OWvv9a1vfe/7vfeLR0ToPjbeo9xi8/EA+PwpmBnwZzem1mPBW4gC+ArYYUcJQK0bZF2TAngM/E0AjAMwDMAHAJbz50cMfK9J1MBXCBp0I0B9dv4wAI8A2Nn6/hMAiwHcC+AqhTDUQJZUU4Av8d/UzQKKW2AfwIsAdgdQVYjhqV0PAPcDOAXAegYANYgl7Qng6wDuAzC7wUhY993XzEP4+r8z8CtMlcqWMBgw0I8DcA7/X2oAS+oB4BoALwD4EYDpAO4E0F/9rpsC5AT+3zPpryawJCG7HwIYAWBNneQBn8ccwRRnN75e5Tl7ACYDOEhRCeqmANnI63a8o8hhLvL9tgCO5HvqRQUIwG0MfGE3gpzrARwA4CJGYB/dLCDzLjuNyWmahSQA5yrhrGiqFADYA8B+vOvbFan3ALTxc3/MbKtTI4HfAuofpQQQ8cKPV9eKnA8YMb2EObcBOLFF1rHTIsDcDIKUSObnFsx7Pd7xAwAc7cBiCMA73VpAdh4LANMy7GKhAl8DMJwRwi+I/IPH7c/jejHr5gF4o7ObqZuFALKLZwGYr9Qu151ag7EanuUoQKY5BiTYGOR5FQALuhEgOwUoAVgL4Fml66elAicA2MIyE+c9BieMJcBeAmOhRB1YkT67rAwgL/fHDC8rVGALFtiKUAlJqZkuv1vACFyURdBX2pE+64oIzUQA2bUPA5jn4A2MUiW/A2DTAqiAPPuLCVY+Afb7Ba5hSTmatAnctxChSyGA8NJPAJyfYScJwmwP4KiCqIDPsoWLmfeNgszBZUbeIQAmAXiTz7f483kAg+oGLyJq9lniz4fJHFVyP6pEFBDRVB7HzzgHjz/7EtFHPHYQ8cwKfx7N95RzvLvcewARLYp5z6estSrsbAUDhpC3swF8mpISaMPQhAKcRO2KAiSpi3Mt1pFl51cBnATgaQBf4P8D66wAOBjA6UwpSl3JEAQFtPkALs0gCwiyXJBDIhcyvg2AXjGkXZB1FUygStbntTGwjwVwt1qHshIG5RQWcR2ziUJNz61iwhTMvgXAjJR2fqEChwDYJaNdQIDdM8EmIcBeCuDjHDu/AuBQABOVwclPmFsfALcXLQy2CgKQQoTzM7ykINC5OSXmvo7zfFO5hykD2R8H4EG1/p4DkleZFRyvqEWXQQANxMkAHkoZBCqAOJb1+LTmYc9SAZMowIsZNAAB/l4AHmdqk4Va9W4lClBSZxl/G82TRyC8ACbgw1UgFMNQbwBn5jAP93dElL9kWKcqgB0APMrkPEjpAi8BWMfIg6KCU/2c99bUWVVnVmlc7nsfwI0pBUKhAmcA2DqjYWioo8HmLymAIOu0FYDH+DOtICdywjQWlv2iEKCMfCrMQQC+ywu/FCZcaymMefe9jBG0sjg/BXByCpIu7tx+AC5kKlJWQaYuRy8H6rQIwBxHDcBT6uXDMGFm1QzrLtbAyY45FHU1BIkxYiwRrY0wXKwiou+oe/yMzzghpXEoIKIaEa0mooFs4PFTGIJejHmeXHvU8Z08NvR4RPSIZURKe9T4c5+iDUJ+RrK/E4D/homarYSwgD4wMXW/5t+klVqFFdwLYEoKgVBUuN4ALs6gEbQ5aABvOLJP4fvXwwS+VjJSXKGI7wB4NaXrvFAK4PG5JRHNSdiZgcL2V4hopDJ9eimpwB68A9JSgTVEtL0DFZD59CCiudaOCzMBn+BgApbvjud71mfc+bKOVSLaLyM1LYwCiGdqMAtLcYKep/jvHgBeYhWtmmD0CFMLpwL4XQYqsGlKKtA7Id6/zGO9liAAys4fDeAOnnM5h2pchsmFeE7JVGgWBQARbc08Ns5hEsY7iYiuVeO48DGff/9FIlrJOzNISQV2SKACcn0XNX4QMh4R0QIi6mmtR9h8+xHRuzHUxOUQivObApxOhVAA4YHLWRJ2tYOLelbjHfkES/YuO0OozAKYDB1X6VdTgcsSqIBc31xROS8iVmAO2yf8kHfX/vuJrPNntdvL2rzCam3dMqP9jAaNd1Pm5nnq3q+yJe1AK9smSQj6D36uKxIIuTyO1a8oVVKePSSGtMt7vhWzbvJ+P4UJLK3msIX4vNGOQZ3zILM6TaZnlEbFszUIwFOsr9cSgjlkR64D8P2U1kGCce9e4SALDHIYc2qCXeRYmIyhSkbgkzL6fBPG41iqa0p6hsAJj4i2JaIPmTdWM+q1wlfvJaLNHPic76CrRz2rRkS7Rcge8szbY3R1meseIZK4jDeaiD5VQSp5+P4l9eT7eewAYmNfyBiqSXsWylNl79YLAHZVVjIvhvpckNIRI3P+YYJss0UCBVquEkHIojJ9AfyeLYlZgzjl3SexvFNuREUUP4fX7v9gkjQXq8lSSnYipHMUG3xO5P/DWII89wWYbGLXmAEhoUeySmpH1QQWC4gSAN+DiV/ULEjkkftgClxUM66pGMreh6l/0LCsYz+n6/YRmOIJ/6WEuVpGuaAX6/u/VFG+5YjdeAkLR67ygNx3RYSc0AMmISQMAWT82daaybyvVEJfOSPfJwAdLPR9XLi1r45BoZqfnsY+gKw2by1PTCeiMeoZXsgzf57yWaKPjw0Ztz/bGcJsGzL+eYovyxwOU7/Jy/dPbRTf12cRg/hqQXYmopeUkFbLsSCfEdHpIYAXY8sXiGhFCuOQINdjajwR5naNGUfe4UD+bRs/fxARLVVGpzzAv70ZwC8KAWxpuo2IboqwBKb1fhERTeQdqp8hn/+WgQoERLQ339+uPJsUYwFcy9ZIeT+fiJ7P8X76Hd9kP0QphZ+kJRHAVo/+kYgW5yCR2qH0DhGNtyiOz+rj/BS7UID1pAImiOiICGDKmHMYWYQKXZ/Tvavd1iPrFfPfjLyAQKmGD8HEv/2PUu1qGbWEYRxkcjE/o8au21UpjUOiERwCk0dQ4esDI0zb2gIobu8jWRWt5nTy+GzmndUola9RQaGkJPj5MOHPP2CpvaTUvDRagqhJ13JY1UCWmttZBZuWwl4u0vXZIYCOshFMV4Wj7sqZgCKIcxeAezJELXWa3MCqSnT8CYB92AeQhRpow9FhAF6Gqdu3noHx/RTGIQHc/jDxeYDJL4w7ZsBk7jzOTqOsOYGyMWbCBK82vfyt34CsH6mwNQ2m8NKlbNdPSw08RSq3hYmuvZbHeRrAHxyNQ4J8/QB8ma9tlYAs18FE4wzNUZGEVJWxE3kNml5colF5AVVl3bqaqcHzGalBSckBF7OM0Q/A5Sl2JqlyMD5MCFuc82sHpgBBAcaz7wF4vZl8v1mJIZoazADwFSbdaxQppBTzLqnI5Fdg4g9dEUDe+1CeV7+Ee4OcpWhqiu/f0Wy+3wqVQrVPfxSAn8HEByBDBmwekuwxSzqFNY2gDptCNKPZMFnMHXWy89ulZUghbeTmamapWNuT+K9sV+/lGCgSJtm3Yr0+QeiDAPxvAYJfGKBdECrUYdcKDSN8BcSRAG7mxUI98uFjdHKvjsB/hO0HaYAfViwqrl9BHxaOR8KUuP0SgC1hElLuAbC61TuGaL54NkxvgD51BlC9M56Jpf5dYOIJ47x8drucKETpCROZvT2PuxPbJ4bAeDTD1ukDmNTyX2FDWju1GgKEUYObYGIIG0UNitZ8yqxCXmztfs8Kj69FBJluyxrIcN7Vu7CsMjBmQ9SsgBWtzk5mWeuvMlirIUAYNTiPqUHPDLIBmlj1xIcJlhkJ4DPruyCiQOVOMJFRe8HkFQyJyVfU43gJtQZqatcPhUowbVUEsKnBKJjqIeM7CTWQ+Z0M4Lch32/CO3lPmCilMQz8vg6AzlJEUjSeFQB2BLBMWE0rI4BNDUowkUA/UtfKLbz7F2JDwYkhTAn2ZVVwx4iKpIGl0RRVJFLW73aYYlN/pbBRCKBJio5Jpyb3FyAmjzcD2NvSdVtRBniVWddwmLCzKH7t1UHQJUtFbAMwFsCftTwShgBxqorGSC+mkhZCkhmoQGrQDuNhlKpirUoNwnZ3vWoBa2B7ISzySRjL599oIjYCiHS4OfOl1XwuYXVmbQEGjDiDDTlQHY2g+zE1GB0i+baKLFCvws+BVUbWBvhnAN6G8Zw+A+PJ/MxeU40AvgqW+AWTLXmJlTA2+2WMBPK3XJ8L492S+nlyzwqYQIo1OaNcw0ikz0i5KVsQL7AEnq50JO1uAfhMJvHPwvhH5rv6AmRXjQfwp4IsZOt5Uh2MDCv5ukaSdTDx9muZjC+BScBYxyrUephYfJfjYJa4t+nkLd1cgA0G7kw+p8AErcyPSWsPNReXrcWawJ8dqmQqJXxGCY/tfEIBJc2xiqnHfEaQ91iynqOQaJ3SaZ+Bqb33L51EJggj5aUIoH8IU5twBguWb8FkKa2J8K9oAbDqQgGE/I+FKURQhFRKIRJpkkCYRfVZqTSB3i1uHyCrOUYYki6DqUL2KpPx12EyhlY79BgI8riDhQ1cyObLDlYdvCaRU1sgpAhK43USgEeR87kwgaEvMO9+k2WnKGDbVANFxgOImvUITGEjRACBEiJoYKmLcb8rClFaBRlqMfy7xixsqhLW3lbhYTYpLxTYLgigq2X8mGWCHdiYUc8djgwv6UW4Tlvp6GB+/QIDfCrz7loMKW9oK1oXU/AgGEdFT5gU6k35bOf/BzCr6AsTNyfCYw/1e+HtvRzq8XdWyd1jPv00A3sak/PFIXaMsjLIuCJ+XQxs5QS9u8ZS9vyM4/dQrVc9RpKefK2s/Nu91FlSu6I339M3pIbfdthQ1WszRsQBTUaEZTD5/a+xBlPlTbCaVVqo0rpFN98qxfgVclEA34Gnh2Fm0MCFb+NzEkw0Uat4C9cxG/iQVddlMKV0g5jdq/0b8wB8xGO8y5+L2b6yntXAqkMENeWpFRwUgJ1xQmJWAY5U9EyFqcXgJlsCyaoM1oPPzQtGKjHLr1LU5R1GhkWMJK/AmIFj/TudwR0cZy8QW/u3YErADG0yAth+exffRtp3ThMoezNMmbxPo5CgsyGAHUl8EEx8wLgW9ANU6+DXR4QASBFOM4/VzHNgqrJ9Dgk6CwLYgN8Zxh18nOV1a3YfxBkssA4JAXi9EMIlLhEwHVY/l5TSGRBAY+2WMAGWZ2FDFfI493LQ4BzIsazr78Z/T4BxVY+MMRjVGyFqSuUcC2NibvmgUDsmsB2mMcVF2BBmlSTpN1ITEFPvPJgo5tnWe4yCyYfci4EwIkZtq0d0kKzFbJhIqlVCtVoRATwry/dI5vO7WfFtXgIwPMb2FTCu4qDOlEDGXwSTdDqTjV4dIe83HCbgZhyfw/H56N+iEULYwXkwqXhlAFW/xQBfVqrUHjDFIB5i4NdUcmlUKFpVmVSv5zHmNsguIUg7kAWu3ZVDzVcNtQjG2/cAjOt6DEyQ6OEw6e5TYGIg5J6S0ih0T6asPoqOVhQCNZ8fzALeySqfLUnA0+T+ZZjeg89jg2czjB3UK4RMnrUSppjFi4wElYjQ7jBDztYsN+wHU8NgV1XGJq1gaQf27ALT9cTIAS3SOBpE1IeILufSb64VxnQhqbVEdKmq/HWc1WC6kYfMe6Xq89PmUGovqqPK5twx5CIiuk/1Igh7bkV1WNHvPYmIxtm9DpoFeF1b0COiU6yXqqRsRDFZFYMGEe3LCFGLKP0W8PeLUzS+yIoEq4jooJR1AD2FEGGNLjYhor8jojOI6E4ieoOIOiLmMYmIJoQ0/mgKAnjWIhyoqn+7lpPTFUU/IaJzLIoylIgWOvT+OZiILsxZ7s21FmCViE7KUQxSI0Qp4vthRHQU12h8iTuVjbc2nV/vOoGu5H4UET1g7ZZayl3/OBF9SY3dxu1cpsWwDwH0z/m+Z2PqA9YKRAJB6nMiyt9mQQg/BiGiqC2agQCemsBWRHSD6jfoutB61y9TdXVlRwl/vSdmR+s6xG3c++jTBBaQhjUEMRRMz/86C4hFrbEtR/guxScbuetP4KZLaUvIamA+QESDLZImJPV7CQ0fqgzwna3qoLUQgE9XrKmWs9RtmMB6hwK+30xBvBG8fisi+l1KPm9ThwVE9M2QusSCYHtxb74oiV8W/jQ1v9NDEEb3Btw8RpAMoxLvE9EPFXWrJiD0o6oDWakrIYB+ma/zwqRVxzRQ7mJybQsy8ndf9Yw4oe8e1SASRHRjyLMEaMfwby53oFbyzLl8zz5ENC9BuJTrzxPRNs1Egnrt+p5E9IuUap29699lMo0Q6Vk/a1LMM/RYm1ks44kQ4AqC7snP6MH3JhWjljHu5LG3J6I/OyLBLNZcOnW5eM3HxhPRaxmkab1Qt3DzxSiJWRbqQge+X1Hl4Uvq/rdjqIa2KRzhKLPI99/g+3opTSeJNS1kNtZpG0aIpetqtaCVDGrSLCI6JIKd2NfG872VhMW9KKRvcX8i+tja9YGyLQywgPGkIysImPz3V/O9xioRH2cwmtBoJCgK+CMVyQtSqHYVtXjXElHvBD1ZuoVsnWDsqSpbgV5QX3U2qUUIcx+xWVrPYyciWucgx1Stdq+b8Oep6l2rMaxqHREd7WA6bgkEEGCMZt08za7XizBN2cvjhCHN959KWMyAzbwDLH27HEPWBQivWwgo99yQkhV8zUKCg4louYO8QkT07UZRgiJaxNytsDfNrl9HRJcp501Sa3nZEVcm8H1t6rURSuZ8UYwG8KxFLQSB+pNplpkk1wgCLmANpaTmPoKI3kpAAhn7DMd1aSoFkN0YpNgZRETPsDMDjiqQAO6YBFuCLOqVETtI/r8zxgbw25B7ZX6nOFI6bfCRscpK/njKQXgl7omEevYTKmKQGQl8P7AEnfMtgHiOiDac748yzMgz/qTUPS9irLCGTwKMn0UgjwDhuZSs4NCQLmVltm9EaQiakl1bTyQoggKI8Neh/NAVdZJq1LRjSju4/K6XUi2rMaRzGZnuXmHje8q3vizE1h/WHzDsfUc4CoSCqB+wDaKk5iVzuSpGXdZIcEsd/AeFCYFjlEQediy1+v+VMxiWJjoaVY5wUB+/nNAgMs5tK2NckoMV2A6y7yaozhXVZLtUtP+gKDVwOPP1N4joD0R0K9vFjyeigRmxVxbrPEfg35iAYHL9zIjxBAj7xyCRAK6Uoou5fP/VGKH0ECJa5IAETxTtPyjaCujiH0jjT5iQYOyRxZ2i3J9eAgLcGrHQdov4UsLcxiQ4oMIMRJtZLEDPa5AyT4exhPVKxulbFCXwCwyH9qz8dzl9pO8QVuP4//tjwqIlDewTACc55NpLJO3okGBQGavCeXRxOXzS/mU6TBHrpB4A8j6DOFLZbjknYe7SYu8KVTCiZmVAV2EquT0NU3gryB3U2uSg0LjQp+cc3apHOVAZT7mmPwmRAeTvFSwkIkHilnm2E9HMjAaiUggllR19qJKrKhHvPZPn6uXRDvwWTQO7iRMmqhHZPZLkcCtM6/qywy4EZ+RsFpJESqriWEfKFnD/7Jj5K7H9v4qYQ6AaZD7BWURPqcaZurJYhbON/kGVl2v5rmFwrAP8bc79i6r1V1N9CM9zbMOiY+IR8nsB3BKY/HvfIY1b5vEygBscWUHAeQ83xHQfFaRfyGlmV4WwBMn1O6AztY1L2vlVzqa5LSavj1RZ1ON5B6YpLjUm4fvlKZNFZJ4/wIYewIEDhTuVgRtF4WoK6JfBdEldotZJvt86Z82BlkAAIY19Afye8+mislxkwc7kRMeSY5qULNjuEe9NqvxqGgQgVQ3sdMcqX0msIIwlPM5JnX/k/6XQ1tWdHQE8BcS7YRohVSPmVWFJ+Nf8W9fOm7Lg/VQB7CgAL8nRFPJZJu1lR61gCKetJSWtCtJ/wEmuF8KUfj+dn+nnyntsstRftmLvkow9Dzro+1F6+9iYUG87aLScUXtpJ6KpKbWCQxxtJX5GG0zLagHCz77B6d9RQp9cfwzAP1kFGdIUqtotQgAMS7bM0xj6W9jQV8Fljlc6Zi8HKoPaz73zm8wCZPJbwJQtiWr7IsCfwsAPcvC8fRzWYU6O8YUVvOWonXiqW1jJsb4RqfTwoLM1jw57mVt5AWohc6mqRtOHs+TvZXhxkdR3j3lnWfjVBRVhuA2m3nI5of0OWPjtD3T97uF28cLDARwbQfplN82GqbbxcQqJP0oA3C5CANRlXhcVUExChLpTASxwINV9sKEWs7cxIIC85N4RpLamDCGHKf23luP9hieoXICpuvkpiqsXtBymK7kXIbN4yoo3cGNCAFmIHULq5grwl/LOfy9nt21Z0HExAqC2Aq6xCjwiR5WQMuvt19il2SzV1mNZaKNhAVASs9T76eDFKMF49w6FKWNSzllYmRS1SfrN8oILTQoyXwZjLm5jSlBjZCCY6mfLYcrJe2hsfeWmIYCQyAtgiiKtZstWG5P9I2Ds/OUcapm2l7fD1NiJel9BgIUFk2FSBa9OgjEVk3KX11i7OZ5lHK8ZjTlboUjU9gDOYBL8n7wjSgWUVBfha5iy01NEBc8yTG/iswpAvChBdBOYWsY7w/RVmAzTTwDNAj6a3FlLAj3ehykAaZtKi7I1jFY7Ls5t+lEdZR6f2dwsPu1OJwGa6IJFC5RW9xXfLHox9nI07ixsANvzLKAHTezH3HQESNXZIocAOCxBuJPrKxrUQQytWI+3Kx4C2CkJPFbWYF6TO6R3IwCKr9gJAHcyfw+L8iH12xXdCIAu18mrzIC9XzWb1t+LIWYWNrSgDTYmBOisLWPStqzfBiaIYpSiDCXlANofVh39bgrQdagAwTh59gUwkQFfYuPLgwC+srECf2OgALZNADBVyLdgZFgc8n03AnRxrYAs1zRtrMDf2BDA7qZV29gk/m4E6D4+d/w/2w7Sf8FvqCEAAAAASUVORK5CYII=) center / contain no-repeat; mask: url(data:image/png;base64,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) center / contain no-repeat; }
+.cbtn .cl-ico, .big-btn .cl-ico, .cv-chip:not(.soft) .cl-ico, .soft-btn.go .cl-ico { color: #fdf6ef; }
+.tab.mid.claude .orb .cl-ico { width: 31px; height: 31px; color: #fdf6ef; }
+.cv-chip { display: inline-flex; align-items: center; gap: 6px; }
+.cbtn.mini .cl-ico { width: 19px; height: 19px; }
+.mi-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }   /* chiffres (ou compte à rebours) + Claude à droite (22/10) */
+.mi-row .line { flex: 1; min-width: 0; margin-top: 0 !important; display: grid; grid-template-columns: 1fr 1.3fr 1.45fr .55fr .9fr; gap: 6px; }   /* Cmd serrée près de Conv. : CA et Pub en entier (22/10) */
+.mi-row .mi-x { flex: 1; min-width: 0; margin-top: 0; }
+.mi-row .line > div { text-align: center; }   /* chaque chiffre centré sous son titre, quelle que soit sa longueur (22/10) */
+.mi-row .line .pubbtn { margin: -2px auto 0; }
+.mi-b { flex: none; padding: 1px 6px; border-radius: 99px; background: var(--soft); box-shadow: inset 0 1px 0 rgba(255,255,255,.14); font-size: 11px; font-weight: 650; color: var(--muted); white-space: nowrap; }   /* bulle comme avant (22/10) */
+/* total des boutiques en une ligne (22/10) */
+.tot { display: flex; align-items: flex-end; gap: 16px; padding: 10px 15px 11px; border-radius: 18px; background: var(--glass); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: var(--glass-edge); }
+.tot span { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.tot-m { flex: 1; min-width: 0; text-align: right; }
+.tot-m b { display: block; margin-top: 1px; font-size: 26px; font-weight: 780; letter-spacing: -.02em; line-height: 1.08; white-space: nowrap; }
+.tot-s b { display: block; margin-top: 2px; font-size: 15px; font-weight: 700; white-space: nowrap; }
+/* vue compacte des boutiques (22/10) : les 4 d'un coup. Ligne du haut : « Détails / Compact » à gauche, mise à jour au milieu, ↻ à droite */
+.home-top .upd { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.home-top .upd .vt { justify-self: center; margin-left: 0; }   /* au milieu entre le bord et « Mis à jour » */
+.home-top .upd .rf { justify-self: center; margin-left: 0; }
+.upd-c { display: inline-flex; align-items: center; gap: 8px; }
+.vt { height: 30px; padding: 0 11px; margin-left: 2px; border-radius: 999px; background: var(--soft); color: var(--text); font-size: 13px; font-weight: 650; box-shadow: inset 0 1px 0 rgba(255,255,255,.14); }
+.card.mini { padding: 15px 17px 14px; margin-top: 12px; border-radius: 20px; }   /* aérée (22/10 : « trop serré ») */
+.card.mini .head { gap: 7px; min-height: 28px; }
+.card.mini .name { font-size: 15px; }
+.card.mini .lv { margin-left: 0; font-size: 12px; gap: 3px; flex: none; width: 34px; justify-content: center; }   /* centré au-dessus du bouton Claude (34 px), quel que soit le nombre */
+.card.mini .lv i { width: 6px; height: 6px; }
+.mi-p { font-size: 21px; font-weight: 780; letter-spacing: -.02em; white-space: nowrap; }
+.cbtn.mini { width: 34px; height: 34px; padding: 0; margin-left: 0; justify-content: center; font-size: 13px; }
+.card.mini .line { margin-top: 10px; font-size: 14.5px; }
+.card.mini .line span { font-size: 11.5px; margin-bottom: 1px; }
+.card.mini .pubbtn { padding: 0 5px 1px; margin: -2px 0 0 -6px; border-radius: 8px; }
+.card.mini .tg { padding: 1px 5px; font-size: 11px; }
+.mi-new { flex: none; padding: 1px 6px; border-radius: 99px; font-size: 11px; font-weight: 700; color: var(--blue); background: rgba(10,132,255,.15); }
+.mi-x { margin-top: 8px; font-size: 14px; color: var(--muted); }
+.mi-x.launch { color: var(--blue); font-weight: 650; }
+.mi-todo.open { white-space: normal; overflow: visible; line-height: 1.38; }
+.mi-todo { cursor: pointer; margin-top: 9px; font-size: 13px; font-weight: 650; color: var(--orange); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- Page principale compacte (21/10 : tout tient sur l'écran de l'iPhone, sans descendre) ---------- */
+:root { --top-pad: 30px; --top-bg: rgba(232,233,238,.82); }   /* --top-pad : assez bas sous la Dynamic Island (Adama, 21/10) */
+@media (prefers-color-scheme: dark) { :root { --top-bg: rgba(5,6,8,.8); } }
+.wrap { padding-top: calc(var(--top-pad) + env(safe-area-inset-top)); }
+/* en-tête figé (21/10) : mise à jour, période, date et total restent en haut, juste sous la Dynamic Island ; seules les boutiques
+   défilent dessous. Fixe (pas « collant ») : sur l'iPhone, le collant à marge négative comptait l'encoche deux fois. */
+.wrap:has(> .home-top) { padding-top: 0; }
+.home-sp { height: 300px; }   /* cale = hauteur de l'en-tête, mesurée par renderHome */
+.home-top { position: fixed; top: 0; left: 0; right: 0; z-index: 6; padding: calc(var(--top-pad) + env(safe-area-inset-top)) max(16px, calc(50vw - 244px)) 8px; background: var(--top-bg); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); }
+.home-top::after { content: ''; position: absolute; left: 0; right: 0; bottom: -26px; height: 26px; background: linear-gradient(var(--top-bg), rgba(var(--fade), .45) 45%, transparent); pointer-events: none; }
+.home-top .seg { position: static; }
+.home-sp + .stage { padding-top: 16px; }   /* au repos, la 1re boutique commence sous le fondu */
+.upd { font-size: 14px; margin-bottom: 8px; }
+.rf { width: 30px; height: 30px; line-height: 30px; font-size: 16px; }
+.seg.main { padding: 3px; }
+.seg.main button { height: 30px; font-size: 13.5px; }
+.nav { margin: 8px 2px 0; }
+.nav .t b { font-size: 19px; line-height: 1.15; }
+.nav .t span { font-size: 12px; }
+.arrow { width: 34px; height: 34px; font-size: 22px; }
+.card { padding: 14px 15px; margin-top: 10px; border-radius: 20px; }
+.toprow { margin-top: 8px; }
+.total { padding: 2px 4px 0; }
+.total .big { font-size: 32px; }
+.total .cmp { margin-top: 4px; }
+.big { font-size: 36px; margin-top: 8px; }
+.big .part { margin-left: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--muted); vertical-align: 6px; }
+.empty.launch { color: var(--blue); font-weight: 650; }   /* « Lancement dans … » (22/10) */
+.born { margin-top: 7px; font-size: 13px; font-weight: 650; color: var(--blue); }   /* « Boutique créée ce jour-là » (21/10) */
+.todo { margin-top: 7px; font-size: 13.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+.todo.open { display: block; -webkit-line-clamp: unset; }
+.line { margin-top: 8px; }
+.line span { font-size: 12px; }
+.bars { height: 52px; margin-top: 12px; }   /* = H de bars() */
+.foot { margin-top: 14px; }
+
+/* ---------- Onglets en bas (comme Fidely) : Commentaires · Tableau de bord · WhatsApp ---------- */
+:root { --ring: #f6f6f9; --wa: #1fb655; --wa-ink: #0b7a37; --tab-on: rgba(0,0,0,.06); }
+@media (prefers-color-scheme: dark) { :root { --ring: #16171f; --wa: #25d366; --wa-ink: #25d366; --tab-on: rgba(255,255,255,.14); } }
+:root { --bar-b: max(8px, calc(env(safe-area-inset-bottom) - 20px)); }   /* écart barre ↔ bas de l'écran (Adama, 21/10) */
+html.has-tabs .wrap { padding-bottom: calc(118px + env(safe-area-inset-bottom)); }
+/* même hauteur minimale pour toutes les pages (+1 px : toutes défilent ; dvh = hauteur visible, comme la barre) : sur l'iPhone, une page trop courte pour défiler
+   remontait la barre du bas de quelques points ; elle ne doit jamais bouger d'un onglet à l'autre */
+html.has-tabs .wrap { min-height: calc(100dvh + 1px); }   /* rien n'est caché sous la barre */
+html.has-tabs .toast { bottom: calc(108px + env(safe-area-inset-bottom)); }
+html.chat-open .tabbar { display: none; }
+/* sous la barre (21/10) : les cartes s'effacent en dégradé jusqu'en bas de l'écran, plus de coupure */
+:root { --fade: 232,233,238; }
+@media (prefers-color-scheme: dark) { :root { --fade: 5,6,8; } }
+html.has-tabs body::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; top: calc(100dvh - 104px - var(--bar-b)); z-index: 39; pointer-events: none; height: calc(104px + var(--bar-b)); background: linear-gradient(to bottom, rgba(var(--fade), 0), rgba(var(--fade), .9) 42%, rgb(var(--fade)) 68%); }
+html.chat-open body::after { display: none; }
+.tabbar { position: fixed; z-index: 40; left: 12px; right: 12px; margin: 0 auto; max-width: 460px; bottom: var(--bar-b); top: calc(100dvh - 64px - var(--bar-b)); height: 64px; padding: 0 6px; display: grid; grid-template-columns: minmax(0, 1fr) 82px 82px minmax(0, 1fr); border-radius: 999px; background: var(--glass-strong); -webkit-backdrop-filter: blur(30px) saturate(190%); backdrop-filter: blur(30px) saturate(190%); box-shadow: var(--glass-edge), 0 16px 40px -14px rgba(0,0,0,.6); animation: rise .25s ease-out; }
+.tab { position: relative; z-index: 1; isolation: isolate; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 650; color: var(--muted); }
+.tab svg { width: 26px; height: 26px; display: block; }
+.tab .lb { white-space: nowrap; }
+.tab.on { color: var(--text); }
+.tab[data-t="comments"].on svg { color: var(--blue); }
+.tab[data-t="whatsapp"].on svg { color: var(--wa); }
+.tab .bd { position: absolute; top: 5px; left: calc(50% + 4px); min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: var(--red); color: #fff; font-size: 11px; font-weight: 750; line-height: 19px; text-align: center; box-shadow: 0 0 0 2px var(--ring); }
+.tab.mid .orb { width: 62px; height: 62px; margin-top: -26px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: linear-gradient(150deg, #4c9bff, #0a5fd8); box-shadow: 0 0 0 5px var(--ring), inset 0 1px 0 rgba(255,255,255,.45), 0 12px 26px -8px rgba(10,132,255,.9); transition: transform .15s, opacity .15s; }
+.tab.mid:not(.on) .orb { filter: saturate(.6) brightness(.82); box-shadow: 0 0 0 5px var(--ring), inset 0 1px 0 rgba(255,255,255,.3); }   /* jamais transparent : sinon le bord de la barre se voit au travers (21/10) */
+.tab.mid:active .orb { transform: scale(.94); }
+.tab.mid .orb svg { width: 28px; height: 28px; }
+.tab.mid .lb { margin-top: 3px; }
+/* 2e bouton principal (21/10) : Claude, diagnostic du jour de toutes les boutiques — même taille que l'Accueil, couleur de Claude */
+.tab.mid.claude .orb { background: linear-gradient(150deg, #ea8d6e, #c15f3c); box-shadow: 0 0 0 5px var(--ring), inset 0 1px 0 rgba(255,255,255,.45), 0 12px 26px -8px rgba(217,119,87,.9); filter: none; }
+.tab.mid.claude .orb svg { width: 27px; height: 27px; }
+.tab.mid.claude.busy .orb { animation: claudepulse 1.6s ease-in-out infinite; }
+@keyframes claudepulse { 50% { box-shadow: 0 0 0 5px var(--ring), 0 0 0 11px rgba(217,119,87,.35), 0 12px 26px -8px rgba(217,119,87,.9); } }
+/* verre liquide d'iOS 26 (Adama, 02/11) : une seule bulle pour toute la barre. Elle glisse d'un onglet à l'autre en s'étirant
+   (et se fond dans le rond de l'Accueil) ; sous le doigt elle grossit en loupe de verre, suit le glissement et se pose où on lâche */
+:root { --lq-glass: radial-gradient(130% 100% at 50% 0%, rgba(255,255,255,.95), rgba(228,230,238,.6) 58%, rgba(255,255,255,.8));
+  --lq-edge: inset 0 1.5px 1px #fff, inset 0 -1px 1px rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.07), 0 10px 26px -10px rgba(0,0,0,.35); }
+@media (prefers-color-scheme: dark) { :root { --lq-glass: radial-gradient(130% 100% at 50% 0%, rgba(255,255,255,.34), rgba(255,255,255,.07) 55%, rgba(255,255,255,.16));
+  --lq-edge: inset 0 1.5px 1px rgba(255,255,255,.8), inset 0 -1px 1px rgba(255,255,255,.3), inset 0 0 0 1px rgba(255,255,255,.2), 0 10px 26px -10px rgba(0,0,0,.6); } }
+.tabbar { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.lq-b { position: absolute; left: 0; top: 0; z-index: 0; width: 0; height: 0; pointer-events: none; border-radius: 999px; will-change: transform, width, height, opacity; --lift: 0; }
+.lq-b::before, .lq-b::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.lq-b::before { background: var(--tab-on); box-shadow: inset 0 1px 0 rgba(255,255,255,.2); opacity: calc(1 - var(--lift)); }
+.lq-b::after { background: var(--lq-glass); box-shadow: var(--lq-edge); opacity: var(--lift); }
+.tab svg, .tab .lb { transition: transform .25s cubic-bezier(.3, 1.5, .5, 1); }
+.tab.lq { color: var(--text); }
+.tab.lq > svg { transform: scale(1.16); }
+.tab.lq .lb { transform: scale(1.07); }
+.tab.mid.lq .orb { transform: scale(1.07); filter: none; }
+/* puce « Diagnostic du jour » dans la conversation : un toucher = envoyé */
+.cv-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+.cv-chip { height: 38px; padding: 0 16px; border-radius: 999px; font-size: 15px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #d97757, #c15f3c); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+.cv-chip.soft { color: #d97757; background: rgba(217,119,87,.14); box-shadow: none; }
+
+/* en-tête des onglets Commentaires et WhatsApp */
+.pg-h { display: flex; align-items: center; gap: 12px; margin: 0 2px; }
+.pg-t { flex: 1; min-width: 0; }
+.pg-t h1 { margin: 0; font-size: 30px; font-weight: 780; letter-spacing: -.02em; line-height: 1.1; }
+.pg-t div { font-size: 14px; color: var(--muted); margin-top: 3px; }
+.pg-h .cbtn { height: 36px; padding: 0 14px; font-size: 15px; }
+.pg-u { font-size: 13px; color: var(--muted); margin: 6px 2px 0; min-height: 17px; }
+.off { font-size: 14px; color: var(--muted); margin-top: 12px; padding: 10px 14px; border-radius: 14px; background: var(--soft); }
+.sec { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin: 26px 4px 0; }
+.sec b { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: rgba(255,159,10,.16); color: var(--orange); font-size: 12px; display: grid; place-items: center; letter-spacing: 0; }
+.chips { display: flex; gap: 8px; overflow-x: auto; margin: 14px -16px 0; padding: 2px 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; height: 36px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 650; color: var(--muted); background: var(--glass); box-shadow: var(--glass-edge); white-space: nowrap; }
+.chip.on { background: var(--text); color: var(--bg); box-shadow: none; }
+.seg.f4 { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 12px; }
+.seg.f4 button { font-size: 13px; height: 36px; }
+/* gros boutons faciles au pouce : Claude en orange (comme la bulle « ✦ Claude ») */
+.big-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 52px; margin-top: 12px; border-radius: 999px; font-size: 17px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #d97757, #c15f3c); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 24px -12px rgba(217,119,87,.9); }
+.soft-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 46px; margin-top: 14px; border-radius: 999px; font-size: 15px; font-weight: 700; color: #d97757; background: rgba(217,119,87,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.big-btn:active, .soft-btn:active { transform: scale(.98); }
+
+/* carte commentaire : traduction en français en grand, original replié */
+.cm-h { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.cm-h .au { font-size: 15px; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cm-h .ti { font-size: 13px; color: var(--muted); white-space: nowrap; flex: none; }
+.pf { flex: none; width: 24px; height: 18px; border-radius: 6px; font-size: 10px; font-weight: 800; color: #fff; display: grid; place-items: center; letter-spacing: .02em; }
+.pf.fb { background: #0866ff; } .pf.ig { background: linear-gradient(45deg, #f58529, #dd2a7b 55%, #8134af); }
+.tg { flex: none; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+.t-blue { color: var(--blue); background: rgba(10,132,255,.15); } .t-green { color: var(--green); background: rgba(48,209,88,.15); }
+.t-orange { color: var(--orange); background: rgba(255,159,10,.16); } .t-red { color: var(--red); background: rgba(255,69,58,.15); } .t-grey { color: var(--muted); background: var(--soft); }
+.cm-ad { font-size: 12px; color: var(--muted); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cm-fr { font-size: 18px; font-weight: 600; line-height: 1.38; margin-top: 10px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.cm-fr.wait, .rp .wait { color: var(--muted); font-weight: 500; font-style: italic; }
+.cm-or { margin-top: 6px; font-size: 14px; color: var(--muted); }
+.cm-or > summary { list-style: none; display: inline-flex; align-items: center; gap: 5px; padding: 6px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--faint); cursor: pointer; }
+.cm-or > summary::-webkit-details-marker { display: none; }
+.cm-or > summary::after { content: '›'; font-size: 16px; line-height: 1; transition: transform .15s; }
+.cm-or[open] > summary::after { transform: rotate(90deg); }
+.cm-or p { margin: 0 0 2px; line-height: 1.38; overflow-wrap: anywhere; white-space: pre-wrap; }
+.rps { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.rp { font-size: 15px; line-height: 1.38; padding: 9px 12px; border-radius: 14px; background: var(--soft); overflow-wrap: anywhere; white-space: pre-wrap; }
+.rp b { display: block; font-size: 12px; color: var(--muted); white-space: normal; }
+.rp .cm-or { margin-top: 2px; font-size: 13px; }
+.rp.me { background: rgba(10,132,255,.14); } .rp.me b { color: var(--blue); }
+.cm.dim, .rp.dim { opacity: .5; }
+/* pilote automatique (les réponses partent seules) + nouveaux depuis la dernière ouverture de l'onglet */
+.seg.f3 { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; }
+.seg.f3 button { font-size: 13px; height: 36px; }
+.pilot { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; padding: 11px 14px; border-radius: 16px; background: var(--glass); box-shadow: var(--glass-edge); font-size: 14px; line-height: 1.4; color: var(--muted); }
+.pilot i { flex: none; width: 9px; height: 9px; margin-top: 6px; border-radius: 50%; background: var(--faint); }
+.pilot.on i { background: var(--green); box-shadow: 0 0 0 4px rgba(48,209,88,.18); }
+.pilot.paused i { background: var(--orange); box-shadow: 0 0 0 4px rgba(255,159,10,.18); }
+.pilot b { color: var(--text); font-weight: 700; }
+.sec.new b { background: rgba(10,132,255,.15); color: var(--blue); }
+.cm.new { box-shadow: var(--glass-edge), inset 0 0 0 1.5px rgba(10,132,255,.5), 0 12px 34px -14px rgba(0,0,0,.45); }
+.cm-nw { flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--blue); white-space: nowrap; }
+.cm-nw::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+.rp .at { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 5px; background: rgba(48,209,88,.16); color: var(--green); font-size: 10px; font-weight: 800; letter-spacing: .04em; line-height: 16px; vertical-align: 1px; }
+.cm-note { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.cm-note.warn { color: var(--orange); }
+
+/* onglet WhatsApp, comme la page du Mac (21/10) : 3 cases « À toi / À l'agent / Au client », une ligne par sujet, une action */
+.wa-boxes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.wa-box { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 12px 12px 11px; border-radius: 18px; text-align: left; background: var(--glass); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); box-shadow: var(--glass-edge); transition: transform .12s; }
+.wa-box:active { transform: scale(.97); }
+.wa-box b { font-size: 28px; font-weight: 780; line-height: 1.05; letter-spacing: -.02em; color: var(--faint); }
+.wa-box span { max-width: 100%; font-size: 13px; font-weight: 650; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wa-box.has.orange b { color: var(--orange); } .wa-box.has.blue b { color: var(--blue); } .wa-box.has.grey b { color: var(--text); }
+.wa-box.on.orange { background: rgba(255,159,10,.16); box-shadow: inset 0 0 0 1.5px rgba(255,159,10,.6); }
+.wa-box.on.blue { background: rgba(10,132,255,.15); box-shadow: inset 0 0 0 1.5px rgba(10,132,255,.6); }
+.wa-box.on.grey { background: var(--soft); box-shadow: inset 0 0 0 1.5px var(--faint); }
+.wa-box.on span { color: var(--text); }
+.card.wa-list { padding: 2px 0; }
+.wa-row + .wa-row { border-top: 1px solid var(--line); }
+.wa-row > summary { list-style: none; display: flex; align-items: flex-start; gap: 11px; padding: 14px 16px; cursor: pointer; }
+.wa-row > summary::-webkit-details-marker { display: none; }
+.wa-dot { flex: none; width: 9px; height: 9px; margin-top: 7px; border-radius: 50%; }
+.wa-dot.orange { background: var(--orange); } .wa-dot.blue { background: var(--blue); } .wa-dot.grey { background: var(--faint); }
+.wa-row-m { flex: 1; min-width: 0; }
+.wa-row-t { font-size: 16px; font-weight: 650; line-height: 1.32; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.wa-row[open] .wa-row-t { display: block; -webkit-line-clamp: unset; }
+.wa-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
+.wa-ord { font: 650 12px/22px ui-monospace, Menlo, monospace; padding: 0 7px; border-radius: 7px; background: var(--soft); }
+.wa-since { font-size: 12px; color: var(--muted); }
+.wa-row .chev { flex: none; width: 18px; text-align: center; color: var(--faint); font-size: 22px; line-height: 20px; transition: transform .15s; }
+.wa-row[open] .chev { transform: rotate(90deg); }
+.wa-row-b { padding: 0 16px 16px 36px; margin-top: -4px; }
+.wa-row-b p { margin: 0; font-size: 15px; line-height: 1.42; color: var(--muted); overflow-wrap: anywhere; }
+.wa-s { position: relative; padding-left: 14px; margin-top: 7px; font-size: 14px; line-height: 1.4; color: var(--muted); overflow-wrap: anywhere; }
+.wa-s::before { content: ''; position: absolute; left: 2px; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--faint); }
+.wa-row-b .soft-btn { margin-top: 12px; }
+.wa-row-b .soft-btn.go { color: #fff; background: linear-gradient(135deg, #d97757, #c15f3c); box-shadow: inset 0 1px 0 rgba(255,255,255,.45); }
+.wa-done { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 26px 16px; font-size: 15px; font-weight: 600; color: var(--muted); text-align: center; }
+.wa-done svg { width: 28px; height: 28px; color: var(--green); }
+.wa-hist { margin-top: 22px; }
+.wa-hist > summary { list-style: none; display: flex; align-items: center; gap: 8px; margin: 0 4px; padding: 6px 0; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; cursor: pointer; }
+.wa-hist > summary::-webkit-details-marker { display: none; }
+.wa-hist > summary::after { content: '›'; margin-left: auto; font-size: 22px; line-height: 1; transition: transform .15s; }
+.wa-hist[open] > summary::after { transform: rotate(90deg); }
+.wa-hist .card { padding: 4px 16px; margin-top: 8px; }
+.wa-ev { display: flex; gap: 12px; padding: 12px 0; font-size: 15px; line-height: 1.38; }
+.wa-ev + .wa-ev { border-top: 1px solid var(--line); }
+.wa-ev .t { flex: none; min-width: 50px; text-align: center; padding: 3px 4px; border-radius: 8px; background: rgba(37,211,102,.15); color: var(--wa-ink); line-height: 1.1; align-self: flex-start; }
+.wa-ev .t b { display: block; font-size: 14px; } .wa-ev .t small { font-size: 10px; }
+.wa-ev .w { min-width: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+'use strict';
+const KEY = 'cockpit-code';
+const BUILD = '546a7b0afa'; // remplacé à la publication par l'empreinte de cette page
+const app = document.getElementById('app');
+/** Drapeau du pays (DE → 🇩🇪), comme les titres des conversations ; '' si inconnu. */
+const flagOf = (cc) => (/^[A-Z]{2}$/i.test(String(cc || '')) ? String.fromCodePoint(...[...String(cc).toUpperCase()].map((c) => 0x1f1a5 + c.charCodeAt(0))) : '');
+/** Heure du pays de la boutique (« 14:32 », son fuseau), remise à jour par la boucle des 30 s. */
+const hmIn = (tz) => { try { return new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(new Date()); } catch { return ''; } };
+const timeTag = (s) => { const t = s?.dayTz ? hmIn(s.dayTz) : ''; return t ? `<span class="lt" data-ltz="${esc(s.dayTz)}">${t}</span>` : ''; };
+const flagTag = (s) => { const f = flagOf(s?.market); return f ? `<span class="flag" aria-hidden="true">${f}</span>` : ''; };
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nf = (d) => new Intl.NumberFormat('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = (n, sign) => (n == null || isNaN(n)) ? '—' : `${n < 0 ? '−' : sign && n > 0 ? '+' : ''}${nf(0).format(Math.abs(n))} €`;
+/** Montant dans une autre devise que l'euro (budget Meta, pubs d'un compte en dollars) : « 100 $ USD » (règle d'Adama : code ISO quand le symbole est ambigu). */
+const money0 = (n, cur) => (!cur || cur === 'EUR' ? eur(n) : n == null || isNaN(n) ? '—' : `${nf(0).format(n)} ${cur === 'USD' ? '$ USD' : cur}`);
+/**
+ * Court au-delà de 1 000 (budget de la vue compacte) : « 1,85 k€ », « 1,5 k$ USD », « 2 k€ » (décimales seulement si utiles).
+ * tight : case étroite (bulle du budget à côté du nom, vue compacte) → « $ » seul, « $ USD » y coupait le nom de la boutique.
+ */
+function moneyK(n, cur, tight = false) {
+  const s = !(n >= 1000) ? money0(n, cur) : `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(n / 1000)} k${!cur || cur === 'EUR' ? '€' : cur === 'USD' ? '$ USD' : ` ${cur}`}`;
+  return tight ? s.replace('$ USD', '$') : s;
+}
+const eurK = (n) => (n != null && Math.abs(n) >= 10000) ? `${nf(1).format(n / 1000)} k€` : eur(n);   // court quand ça ne tient pas
+/**
+ * Tout en euros (demande d'Adama, 26/10) : valeur de 1 <devise> en euros, envoyée par le Mac (snap.rates, taux de server/money.js).
+ * null si le Mac n'a pas donné cette devise : l'affichage garde alors la devise d'origine. Affichage seulement : les couleurs
+ * de la formation restent calculées sur les valeurs et les repères d'origine (CPC 0,25 $ au Mexique).
+ */
+const rateOf = (cur) => { if (!cur || cur === 'EUR') return 1; const r = Number(S.data?.rates?.[cur]); return Number.isFinite(r) && r > 0 ? r : null; };
+/** Montant lu, converti d'office en euros (« 45 € ») ; sans taux pour cette devise : comme avant (« 50 $ USD »). */
+const eu0 = (n, cur) => { const r = rateOf(cur); return r == null ? money0(n, cur) : eur(n == null ? null : n * r); };
+/**
+ * Montant qui part TEL QUEL chez Meta ou Shopify (budget, prix d'une action proposée) : sa vraie devise, et l'équivalent en
+ * euros à côté (« 100 $ USD/j ≈ 89 € », « 649 MXN ≈ 31 € ») — jamais des euros là où Meta attend des dollars.
+ */
+function realMoney(n, cur, unit = '') {
+  const v = Number(n);
+  if (n == null || n === '' || !Number.isFinite(v)) return '—';
+  const c = cur || 'EUR', r = c === 'EUR' ? null : rateOf(c);
+  const txt = `${(Number.isInteger(v) ? nf(0) : nf(2)).format(v)} ${c === 'EUR' ? '€' : c === 'USD' ? '$ USD' : c}${unit}`;
+  return r == null ? txt : `${txt} ≈ ${eur(v * r)}`;
+}
+/**
+ * Budget fixé ce jour-là (ou la fourchette de la période), sinon celui d'aujourd'hui : en euros, converti depuis la devise du
+ * compte pub (ASADEVA 50 $ USD → « 45 €/j ») ; sans taux, dans la devise du compte pub. short : vue compacte (« 1,34 k€/j »).
+ */
+function budgetText(s, rows, live, short = false) {
+  const bud = rows.map((r) => r.budget).filter((b) => b != null);
+  const bc = s.budgetCur || 'EUR', r = rateOf(bc), cur = r == null ? bc : 'EUR';
+  const e = (n) => (r == null ? n : n * r);
+  const lo = bud.length ? e(Math.min(...bud)) : null, hi = bud.length ? e(Math.max(...bud)) : null;
+  const f = (n) => (short ? moneyK(n, cur, true) : money0(n, cur));   // court au-delà de 1 000 et « $ » sans « USD » en compact : la ligne du nom garde de la place
+  if (lo == null) return live && s.budget?.amount ? `${f(e(s.budget.amount))}/j` : '';
+  return lo === hi ? `${f(lo)}/j` : short ? `${f(lo)}–${f(hi)}/j` : `${nf(0).format(lo)}–${f(hi)}/j`;
+}
+const pct = (x) => (x == null || isNaN(x)) ? '—' : `${x < 0 ? '−' : ''}${nf(1).format(Math.abs(x * 100))} %`;
+const int = (n) => (n == null || isNaN(n)) ? '—' : nf(0).format(n);
+const tone = (m, p) => m == null ? (p != null && p < 0 ? 'red' : '') : m >= 0.15 ? 'green' : m >= 0 ? 'orange' : 'red';
+// Conversion (formation, module 4) : < 2 % mauvais, 2-3 % bon, ≥ 3 % excellent, > 4 % exceptionnel (bleu) — couleur seulement avec assez de visites
+// Couleur en dégradé continu : 1 % rouge → 2 % orange → 3 % vert → 4 % bleu (entre deux, la teinte glisse)
+const CVR_STOPS = [[0.010, 2], [0.020, 32], [0.030, 140], [0.040, 212]];   // [taux, teinte HSL]
+function cvrHue(c) {
+  if (c <= CVR_STOPS[0][0]) return CVR_STOPS[0][1];
+  for (let i = 1; i < CVR_STOPS.length; i++) {
+    const [x0, h0] = CVR_STOPS[i - 1], [x1, h1] = CVR_STOPS[i];
+    if (c <= x1) return h0 + (h1 - h0) * (c - x0) / (x1 - x0);
+  }
+  return CVR_STOPS[CVR_STOPS.length - 1][1];
+}
+// Marge en dégradé (demande d'Adama) : perte rouge ; 0 % orange → 15 % vert (bien) → 25 % et plus bleu (excellent), comme le Mac et la légende Info
+const MARGIN_STOPS = [[0, 32], [0.15, 130], [0.25, 212]];
+function hueAt(stops, v) {
+  if (v <= stops[0][0]) return stops[0][1];
+  for (let i = 1; i < stops.length; i++) {
+    const [x0, h0] = stops[i - 1], [x1, h1] = stops[i];
+    if (v <= x1) return h0 + (h1 - h0) * (v - x0) / (x1 - x0);
+  }
+  return stops[stops.length - 1][1];
+}
+const marginHue = (m, profit) => m != null ? (m < 0 ? 2 : hueAt(MARGIN_STOPS, m)) : (profit != null && profit < 0 ? 2 : null);
+const marginStyle = (m, profit) => { const h = marginHue(m, profit); return h == null ? '' : `color:hsl(${h.toFixed(0)} 80% var(--cvL))`; };
+const cvrStyle = (c, sessions) => c == null || sessions < 20 ?   // couleur dès 20 visites (Adama, 26/10)
+  '' : `color:hsl(${cvrHue(c).toFixed(0)} 80% var(--cvL))`;
+const JOURS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
+const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+const pk = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); };
+const addDays = (k, n) => { const t = pk(k); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
+const dShort = (k) => { const t = pk(k); return `${t.getUTCDate()} ${MOIS[t.getUTCMonth()]}`; };
+const dLong = (k) => { const t = pk(k); return `${JOURS[t.getUTCDay()]} ${t.getUTCDate()} ${MOIS[t.getUTCMonth()]}`; };
+const todayKey = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+/** Jour en cours d'une boutique dans son fuseau (HOOPLUME : New York), comme ses lignes d'historique côté Mac. */
+const shopKey = (s) => new Intl.DateTimeFormat('en-CA', { timeZone: s?.dayTz || 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+const ago = (iso) => { const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 1 ? "à l'instant" : m < 60 ? `il y a ${m} min` : `il y a ${Math.round(m / 60)} h`; };
+const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+// ---------- données chiffrées ----------
+async function decrypt(blob, code) {
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(code.trim().toLowerCase()), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(blob.salt), iterations: blob.iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(blob.iv) }, key, b64(blob.ct))));
+}
+// Les chiffres sont sur la branche « data » du dépôt (poussée par le Mac à chaque mise à jour) : lus par l'API GitHub
+// (frais tout de suite), sinon par raw.githubusercontent (cache de quelques minutes).
+const API = 'https://api.github.com/repos/step-international/cockpit-m/contents/data.enc.json?ref=data';
+const RAW = 'https://raw.githubusercontent.com/step-international/cockpit-m/data/data.enc.json';
+async function fetchBlob() {
+  try {
+    const r = await fetch(`${API}&t=${Date.now()}`, { cache: 'no-store', headers: { Accept: 'application/vnd.github.raw+json' } });
+    if (r.ok) return await r.json();
+  } catch {}
+  const r = await fetch(`${RAW}?t=${Date.now()}`, { cache: 'no-store' });
+  if (!r.ok) throw new Error('Données introuvables');
+  return r.json();
+}
+
+// ---------- état ----------
+const S = { data: null, mode: 'day', offset: 0, anim: '', tab: 'home', cShop: 'all', cFilter: 'all', cPrev: null, seenMem: null, waOpen: null, waBox: null, waHist: false, miOpen: new Set() };
+const PERIOD = { '7': 7, '30': 30, '90': 90 };
+const store = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
+const read = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+// onglet du bas retenu sur cet iPhone (Commentaires · Tableau de bord · WhatsApp)
+const TAB_KEY = 'adama-shopify-tab';
+const VIEW_KEY = 'adama-shopify-vue';   // « compact » (les boutiques d'un coup) ou « detail » (cartes complètes)
+const TABS = ['comments', 'home', 'whatsapp'];
+if (TABS.includes(read(TAB_KEY))) S.tab = read(TAB_KEY);
+
+function rowsFor(shop, from, to) { return (shop.days || []).filter((d) => d.day >= from && d.day <= to); }
+function sum(rows) {
+  const t = { revenue: 0, spend: 0, orders: 0, profit: 0, known: 0, knownRev: 0, spendKnown: 0, sessions: 0, converted: 0, costMissing: rows.some((r) => r.costMissing) };
+  for (const r of rows) {
+    t.revenue += r.revenue || 0; t.orders += r.orders || 0;
+    // conversion comme Shopify : visites qui ont payé ÷ visites (commandes seulement si pas encore lu)
+    if (r.sessions) { t.sessions += r.sessions; t.converted += r.paid ?? r.orders ?? 0; }
+    if (r.spend != null) { t.spend += r.spend; t.spendKnown++; }
+    if (r.profit != null) { t.profit += r.profit; t.known++; t.knownRev += r.revenue || 0; }   // marge sur le CA des jours au bénéfice connu
+  }
+  t.margin = t.known && t.knownRev ? t.profit / t.knownRev : null;
+  t.cvr = t.sessions ? t.converted / t.sessions : null;
+  if (!t.known) t.profit = null;
+  return t;
+}
+// En vue « jour », une boutique (shop) prend SON jour (fuseau de la boutique) ; sans boutique, ou en 7/30/90 j : la date de Paris
+function range(shop = null) {
+  const today = todayKey();
+  if (S.mode === 'day') { const k = addDays(shop ? shopKey(shop) : today, -S.offset); return { from: k, to: k, n: 1 }; }
+  const n = PERIOD[S.mode]; const to = addDays(today, -S.offset * n); return { from: addDays(to, -(n - 1)), to, n };
+}
+function oldest() {
+  let min = null;
+  for (const s of S.data.shops) for (const d of s.days || []) if (!min || d.day < min) min = d.day;
+  return min;
+}
+
+// ---------- affichage ----------
+function bars(shop, from, to) {
+  const rows = []; for (let k = from; k <= to; k = addDays(k, 1)) rows.push((shop.days || []).find((d) => d.day === k) || { day: k, profit: null });
+  const pos = Math.max(0, ...rows.map((r) => r.profit || 0)), neg = Math.max(0, ...rows.map((r) => -(r.profit || 0)));
+  const H = 52, span = (pos + neg) || 1, zero = Math.round(H * neg / span);   // hauteur réservée aux pertes, en bas
+  return `<div class="bars">${rows.map((r) => {
+    if (r.profit == null || r.profit === 0) return '<div class="c"></div>';
+    const h = Math.max(2, Math.round(Math.abs(r.profit) / span * H));
+    const hh = marginHue(r.margin, r.profit); const c = hh == null ? 'var(--faint)' : `hsl(${hh.toFixed(0)} 72% var(--cvL))`;
+    const pos = r.profit > 0 ? `bottom:${zero}px` : `top:${H - zero}px`;
+    return `<div class="c"><i style="${pos};height:${h}px;background:${c};opacity:${r.partial ? .5 : 1}"></i></div>`;
+  }).join('')}<div class="zero" style="bottom:${zero}px"></div></div>`;
+}
+
+/**
+ * Départ des pubs (22/10) : « Lancement dans 4 h 12 · aujourd'hui 05:00 » avant (heure du Japon, + l'heure locale si la boutique
+ * vit ailleurs) ; « Pubs lancées à 05:00 · pas encore de vente » pendant 24 h après ; sinon null (texte habituel).
+ */
+function launchText(at, tz, now, short = false) {
+  const t = Date.parse(at);
+  if (!Number.isFinite(t)) return null;
+  const d = t - now;
+  if (d <= -864e5) return null;
+  const fmt = (zone, o) => new Intl.DateTimeFormat('fr-FR', { timeZone: zone, ...o }).format(new Date(t));
+  const hm = fmt('Asia/Tokyo', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const key = (x) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo' }).format(new Date(x));
+  const local = tz && tz !== 'Asia/Tokyo' ? ` (${fmt(tz, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })} à ${tz.split('/').pop().replace(/_/g, ' ')})` : '';
+  if (d <= 0) return `Pubs lancées à ${hm}${short ? '' : local} · pas encore de vente`;
+  const when = key(t) === key(now) ? `aujourd'hui ${hm}` : key(t) === key(now + 864e5) ? `demain ${hm}` : `${fmt('Asia/Tokyo', { weekday: 'short', day: 'numeric', month: 'numeric' })} ${hm}`;
+  const m = Math.ceil(d / 60000);
+  const dur = m < 60 ? `${m} min` : m < 48 * 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}` : `${Math.floor(m / 1440)} j ${Math.floor((m % 1440) / 60)} h`;
+  if (short) return `Lancement dans ${dur} · ${when.replace(/^aujourd'hui /, '')}`;   // vue compacte : une ligne, heure du Japon
+  return `Lancement dans ${dur} · ${when}${local}`;
+}
+/** « Lots programmés jusqu'au mer. 12/11 (5 jours d'avance) » : vue détail, couleur selon l'avance (07/11). */
+function lotsLine(s) {
+  const L = s.lots;
+  if (!L) return '';
+  if (!L.until) return `<div class="lots red">Aucun lot programmé : à préparer</div>`;
+  const d = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: 'UTC' }).format(new Date(`${L.until}T12:00:00Z`));
+  const ahead = L.days <= 0 ? 'dernier départ aujourd\'hui' : `${L.days} jour${L.days > 1 ? 's' : ''} d'avance`;
+  const tone = L.days <= 0 ? 'red' : L.days <= 1 ? 'orange' : 'green';
+  return `<div class="lots ${tone}">Lots programmés jusqu'au ${esc(d)} <b>(${esc(ahead)})</b>${L.queued ? ` · ${L.queued} en file d'envoi` : ''}</div>`;
+}
+function shopCard(s, rg) {
+  const day = S.mode === 'day';
+  const rows = rowsFor(s, rg.from, rg.to);
+  const t = sum(rows);
+  const live = day && S.offset === 0;
+  // Budget réellement fixé ce jour-là (ou la fourchette sur la période), pas le budget d'aujourd'hui ; en euros
+  const budTxt = budgetText(s, rows, live);
+  const head = `<div class="head"><span class="dot bg-${esc(s.tone || 'blue')}"></span><span class="name">${esc(s.name)}</span>${flagTag(s)}${timeTag(s)}${live && s.visitors && num(s.visitors.count) != null ? `<span class="lv"><i></i>${num(s.visitors.count)}</span>` : ''}<span class="sp"></span>${budTxt ? `<span class="pill muted">${budTxt}</span>` : ''}${S.data.chat && s.id ? `<button class="cbtn" data-c="${S.data.shops.indexOf(s)}"><span class="cl-ico"></span>Claude</button>` : ''}</div>`;
+  // créée pendant la période affichée : on le dit (avant ce jour, la carte n'est pas montrée du tout — renderHome)
+  const born = s.since && s.since >= rg.from && s.since <= rg.to
+    ? `<div class="born">✦ ${day ? (live ? 'Boutique créée aujourd\'hui' : 'Boutique créée ce jour-là') : `Boutique créée le ${esc(dShort(s.since))}`}</div>` : '';
+  // boutique « figée » (serveur de secours sans Shopify pour elle, publish.js) : la note se voit sur toutes les périodes
+  const todo = (live || s.frozenAt) && s.decision ? `<div class="todo ${s.decisionTone === 'orange' ? 'orange' : 'green'}">${esc(s.decision)}${s.decisionWhy ? ` <span class="muted" style="font-weight:500">· ${esc(s.decisionWhy)}</span>` : ''}</div>` : '';
+  if (!rows.length || (!t.revenue && !t.spend && !t.orders)) {
+    const before = !rows.length && (s.days || []).length && rg.to < s.days[0].day;
+    const lt = live && s.launchAt ? launchText(s.launchAt, s.dayTz, Date.now()) : null;   // départ programmé : compte à rebours
+    return `<div class="card">${head}${born}${todo}${live ? lotsLine(s) : ''}${lt ? `<div class="empty launch" data-launch="${esc(s.launchAt)}" data-tz="${esc(s.dayTz || '')}">${esc(lt)}</div>` : `<div class="empty">${before ? 'Pas encore lancée' : s.frozenAt ? 'Chiffres figés' : 'Pas de vente ni de pub'}</div>`}</div>`;
+  }
+  let cmp = '';
+  if (!day) {
+    const prev = sum(rowsFor(s, addDays(rg.from, -rg.n), addDays(rg.from, -1)));
+    if (prev.profit != null && t.profit != null && prev.known) {
+      const diff = t.profit - prev.profit;
+      cmp = `<div class="cmp">${diff >= 0 ? '▲' : '▼'} <b class="${diff >= 0 ? 'green' : 'red'}">${eur(diff, true)}</b> vs les ${rg.n} jours d'avant</div>`;
+    }
+  }
+  return `<div class="card">${head}${born}${todo}${live ? lotsLine(s) : ''}
+    <div class="big" style="${marginStyle(t.margin, t.profit)}">${eur(t.profit, true)}${day && live && rows[0]?.partial ? '<span class="part">en cours</span>' : ''}</div>
+    ${statsLine(s, rg, t)}
+    ${day ? '' : bars(s, rg.from, rg.to) + cmp}
+  </div>`;
+}
+
+/**
+ * Mot d'état d'une boutique (vue compacte, 22/10), comme la formation : marge des 2 derniers jours (objectif 15 %),
+ * sinon la phase. → [mot, couleur des étiquettes .tg]
+ */
+function stateWord(s) {
+  if (s.status === 'paused' || s.phase === 'inactive') return ['En pause', 'grey'];
+  if (s.phase === 'kill') return ['Coupée', 'red'];
+  if (s.phase === 'preparation') return ['Prête', 'blue'];   // « Lancement dans … » juste dessous
+  if (s.phase === 'test') return ['En test', 'blue'];
+  const m = s.margin2d;
+  if (m == null || !Number.isFinite(m)) return [s.phase === 'scaling' ? 'Scaling' : s.phase === 'pre_scaling' ? 'Pré-scaling' : s.phase === 'sauvetage' ? 'Sauvetage' : s.phase === 'big_swing' ? 'Big swing' : 'En cours', 'grey'];
+  if (m >= 0.25) return ['Excellent', 'green'];
+  if (m >= 0.15) return ['Parfait', 'green'];
+  if (m >= 0.05) return ['Rentable', 'green'];
+  if (m >= 0) return ['Limite', 'orange'];
+  return [s.phase === 'big_swing' ? 'Big swing' : s.phase === 'sauvetage' ? 'Sauvetage' : 'En perte', 'red'];
+}
+/** Vue compacte par défaut ; « detail » si Adama l'a choisie sur ce téléphone. */
+function compactView() {
+  return read(VIEW_KEY) !== 'detail';
+}
+/** Marge · CA · Pub (bouton, pastille de santé) · Cmd · Conv. : vue détaillée et vue compacte. */
+function statsLine(s, rg, t, short = false) {
+  // montants en entier jusqu'à 9 999 € (« 2 680 € »), courts au-delà (« 12,7 k€ ») ; en compact, CA et Pub ont des colonnes plus larges
+  const m = (n) => eurK(n);
+  const pub = (s.adMeta && Object.keys(s.adMeta).length)
+    ? `<button class="pubbtn" data-i="${S.data.shops.indexOf(s)}"><span>Pub${(() => { const h = adHealth(s, rg); return h ? `<i class="pd" style="background:${ST_COLOR[h]}"></i>` : ''; })()} ›</span>${t.spendKnown ? m(t.spend) : '—'}</button>`
+    : `<span>Pub</span>${t.spendKnown ? m(t.spend) : '—'}`;
+  return `<div class="line">
+      <div><span>Marge</span><b style="${marginStyle(t.margin)}">${short && t.margin != null && Math.abs(t.margin) >= 1 ? `${t.margin < 0 ? '−' : ''}${nf(0).format(Math.abs(t.margin * 100))} %` : pct(t.margin)}</b></div>
+      <div><span>CA</span>${m(t.revenue)}</div>
+      <div>${pub}</div>
+      <div><span>Cmd</span>${int(t.orders)}</div>
+      <div><span>Conv.</span><b style="${cvrStyle(t.cvr, t.sessions)}">${t.cvr == null ? '—' : pct(t.cvr)}</b></div>
+    </div>`;
+}
+
+/**
+ * Vue compacte (22/10) : toutes les boutiques d'un coup d'œil. Ligne 1 : nom, bénéfice, Claude ; ligne 2 : les chiffres ;
+ * le conseil seulement quand il y a quelque chose à faire. « Détails » (en haut) repasse à la vue complète.
+ */
+function shopMini(s, rg) {
+  const day = S.mode === 'day';
+  const rows = rowsFor(s, rg.from, rg.to);
+  const t = sum(rows);
+  const live = day && S.offset === 0;
+  const idx = S.data.shops.indexOf(s);
+  const born = s.since && s.since >= rg.from && s.since <= rg.to ? `<span class="mi-new">${live ? 'nouvelle' : 'créée'}</span>` : '';
+  const lv = live && s.visitors && num(s.visitors.count) != null ? `<span class="lv"><i></i>${num(s.visitors.count)}</span>` : '';
+  const claude = S.data.chat && s.id ? `<button class="cbtn mini" data-c="${idx}" aria-label="Claude · ${esc(s.name)}"><span class="cl-ico"></span></button>` : '';
+  const empty = !rows.length || (!t.revenue && !t.spend && !t.orders);
+  // court au-delà de 1 000 (« +1,3 k€ ») : le nom de la boutique ne doit jamais être coupé
+  const pTxt = t.profit != null && Math.abs(t.profit) >= 1000 ? `${t.profit < 0 ? '−' : '+'}${nf(1).format(Math.abs(t.profit) / 1000)} k€` : eur(t.profit, true);
+  const profit = empty ? '' : `<b class="mi-p" style="${marginStyle(t.margin, t.profit)}">${pTxt}</b>`;
+  const [word, wTone] = stateWord(s);
+  // budget fixé ce jour-là (ou la fourchette de la période), comme la vue détaillée, en euros et court (« 1,85 k€/j »)
+  const budTxt = budgetText(s, rows, live, true);
+  const head = `<div class="head"><span class="dot bg-${esc(s.tone || 'blue')}"></span><span class="name">${esc(s.name)}</span>${flagTag(s)}${timeTag(s)}<span class="tg t-${wTone}">${esc(word)}</span>${budTxt ? `<span class="mi-b">${esc(budTxt)}</span>` : ''}${born}<span class="sp"></span>${profit}${profit ? '<span class="sp"></span>' : ''}${lv}</div>`;   // bénéfice centré entre le budget et les visiteurs en direct
+  if (empty) {
+    const lt = live && s.launchAt ? launchText(s.launchAt, s.dayTz, Date.now(), true) : null;
+    return `<div class="card mini">${head}<div class="mi-row">${lt ? `<div class="mi-x launch" data-launch="${esc(s.launchAt)}" data-tz="${esc(s.dayTz || '')}" data-short="1">${esc(lt)}</div>` : `<div class="mi-x">${s.frozenAt ? 'Chiffres figés : Mac fermé' : 'Pas de vente ni de pub'}</div>`}${claude}</div></div>`;
+  }
+  // l'action à faire (sans répéter le mot d'état : « Sauvetage : optimisation à faire ce soir » → « optimisation à faire ce soir »)
+  const act = String(s.decision || '').trim().toLowerCase() === word.toLowerCase() ? s.decisionWhy || s.decision : s.decision;
+  // toucher la note = la note entière (titre + détail), gardée ouverte quand les chiffres se mettent à jour
+  const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+  const full = [s.decision, s.decisionWhy].filter(Boolean).join(' : ');
+  const open = S.miOpen.has(s.id);
+  const todo = (live || s.frozenAt) && act && s.decisionTone === 'orange' ? `<div class="mi-todo ${open ? 'open' : ''}" data-note="${esc(s.id)}">${esc(cap(open ? full : act))}</div>` : '';
+  return `<div class="card mini">${head}<div class="mi-row">${statsLine(s, rg, t, true)}${claude}</div>${todo}</div>`;
+}
+
+/** Onglet « Tableau de bord » (milieu) : la page des boutiques. */
+function renderHome() {
+  const d = S.data; if (!d) return;
+  const rg = range();
+  const today = todayKey();
+  const label = S.mode === 'day'
+    ? (S.offset === 0 ? "Aujourd'hui" : S.offset === 1 ? 'Hier' : dLong(rg.from))
+    : (S.offset === 0 ? `${rg.n} derniers jours` : `${rg.n} jours`);
+  const sub = S.mode === 'day' ? (S.offset < 2 ? dLong(rg.from) : '') : `${dShort(rg.from)} → ${dShort(rg.to)}`;
+  const canBack = (oldest() || today) < rg.from;
+  const shops = d.shops || [];
+  // chaque boutique sur SON jour (HOOPLUME : journée de New York) ; le titre garde la date de Paris
+  const rgOf = new Map(shops.map((s) => [s, range(s)]));
+  const rowsOf = (s) => rowsFor(s, rgOf.get(s).from, rgOf.get(s).to);
+  const withData = shops.filter((s) => { const t = sum(rowsOf(s)); return t.revenue || t.spend; });
+  let total = '';
+  if (withData.length >= 2) {
+    const all = sum(withData.flatMap(rowsOf).filter((r) => !r.frozen));   // jours figés (incomplets) : hors du total
+    // une seule ligne (22/10) : marge · CA · pub en petites colonnes à gauche, bénéfice total à droite
+    total = `<div class="tot"><div class="tot-s"><span>Marge</span><b style="${marginStyle(all.margin)}">${pct(all.margin)}</b></div>
+      <div class="tot-s"><span>CA</span><b>${eurK(all.revenue)}</b></div>
+      <div class="tot-s"><span>Pub</span><b>${eurK(all.spend)}</b></div>
+      <div class="tot-m"><span>Total des boutiques</span><b style="${marginStyle(all.margin, all.profit)}">${eur(all.profit, true)}</b></div></div>`;
+  }
+  const sched = schedBox(d.scheduled);
+  const top = total || sched ? `<div class="toprow solo">${total}${sched}</div>` : '';   // total en une ligne, « Programmé » dessous s'il y en a
+  app.innerHTML = `
+    <div class="home-top">
+    <div class="upd"><button class="vt" id="vt">${compactView() ? 'Détails' : 'Compact'}</button><span class="upd-c"><span class="live"></span><span id="upd">Mis à jour ${esc(ago(d.generatedAt))}</span></span><button class="rf" id="rf" aria-label="Actualiser">↻</button></div>
+    ${usageLine(d.usage)}
+    <div class="seg main">${[['day:0', "Aujourd'hui"], ['day:1', 'Hier'], ['7', '7 j'], ['30', '30 j'], ['90', '90 j']].map(([k, l]) => {
+      const on = k.startsWith('day:') ? (S.mode === 'day' && S.offset === Number(k.slice(4))) : S.mode === k;
+      return `<button data-m="${k}" class="${on ? 'on' : ''}">${l}</button>`;
+    }).join('')}</div>
+    <div class="nav">
+      <button class="arrow" id="back" ${canBack ? '' : 'disabled'} aria-label="Avant">‹</button>
+      <div class="t"><b>${esc(label)}</b><span>${esc(sub)}</span></div>
+      <button class="arrow" id="next" ${S.offset > 0 ? '' : 'disabled'} aria-label="Après">›</button>
+    </div>
+    ${top}
+    </div>
+    <div class="home-sp"></div>
+    <div class="stage ${S.anim}" id="stage">${shops.filter((s) => !s.since || s.since <= rgOf.get(s).to).map((s) => (compactView() ? shopMini(s, rgOf.get(s)) : shopCard(s, rgOf.get(s)))).join('')}</div>
+    <div class="foot">${d.strategy?.sections?.length ? '<button class="link" id="strat">Stratégie</button> · ' : ''}${d.chat ? '<button class="link" id="chg">Changer le code</button> · ' : ''}<button class="link" id="out">Oublier le code</button></div>`;
+  S.anim = '';
+  // en-tête fixe : la cale dessous prend sa hauteur exacte, et la suit (police chargée, encart « Programmé », rotation)
+  const ht = app.querySelector('.home-top'), sp = app.querySelector('.home-sp');
+  const fit = () => { sp.style.height = `${ht.offsetHeight}px`; };
+  fit();
+  S.homeRO?.disconnect();
+  S.homeRO = typeof ResizeObserver === 'function' ? new ResizeObserver(fit) : null;
+  S.homeRO?.observe(ht);
+  app.querySelectorAll('.seg button').forEach((b) => (b.onclick = () => {
+    const m = b.dataset.m;
+    if (m.startsWith('day:')) { S.mode = 'day'; S.offset = Number(m.slice(4)); } else { S.mode = m; S.offset = 0; }
+    render();
+  }));
+  document.getElementById('vt').onclick = () => { store(VIEW_KEY, compactView() ? 'detail' : 'compact'); render(); };
+  document.getElementById('back').onclick = () => go(1);
+  document.getElementById('next').onclick = () => go(-1);
+  document.getElementById('out').onclick = () => { store(KEY, null); S.data = null; lock(); };
+  const st = document.getElementById('strat'); if (st) st.onclick = openStrategy;
+  const chg = document.getElementById('chg'); if (chg) chg.onclick = () => openChat(0, { then: 'code' });
+  const sb = document.getElementById('sbox'); if (sb) sb.onclick = (e) => { e.stopPropagation(); openSched(); };
+  app.querySelectorAll('.pubbtn').forEach((b) => (b.onclick = (e) => { e.stopPropagation(); openAds(Number(b.dataset.i)); }));
+  app.querySelectorAll('.card .todo').forEach((el) => (el.onclick = () => el.classList.toggle('open')));
+  app.querySelectorAll('[data-note]').forEach((el) => (el.onclick = () => { const id = el.dataset.note; if (S.miOpen.has(id)) S.miOpen.delete(id); else S.miOpen.add(id); render(); }));   // conseil sur 2 lignes : toucher = en entier
+  app.querySelectorAll('.cbtn').forEach((b) => (b.onclick = (e) => { e.stopPropagation(); openChat(Number(b.dataset.c)); }));
+  // ↻ = recharge complète de l'appli (nouvelle version + chiffres frais), comme fermer et rouvrir
+  document.getElementById('rf').onclick = (e) => {
+    e.currentTarget.classList.add('spin');
+    try { sessionStorage.removeItem('cockpit-reload'); } catch {}
+    location.replace(`${location.pathname}?r=${Date.now()}`);
+  };
+}
+// ---------- Changements programmés ----------
+const schedWhen = (iso, tz) => { const t = new Date(Date.parse(iso) - 30000); const o = tz ? { timeZone: tz } : {};
+  return { h: new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', ...o }).format(t), d: new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', ...o }).format(t) }; };
+const schedRow = (x) => { const w = schedWhen(x.runAt, x.tz); return `<div class="srow"><div class="t"><b>${esc(w.h)}</b><small>${esc(w.d)}</small></div><div class="w"><span>${esc(x.shop)}</span><div>${esc(x.label)}</div></div></div>`; };
+const schedSorted = (list) => [...(list || [])].filter((x) => Date.parse(x.runAt) > Date.now() - 3600_000).sort((a, b) => Date.parse(a.runAt) - Date.parse(b.runAt));
+/** « Programmé » sous le total : une carte par changement, côte à côte, on glisse vers la droite (06/11) ; toucher = tout voir. */
+function schedBox(list) {
+  const l = schedSorted(list); if (!l.length) return '';
+  const card = (x, i) => `<button class="sched-box"><div class="sh">Programmé<b>${l.length > 1 ? `${i + 1}/${l.length}` : '1'}</b></div>${schedRow(x)}</button>`;
+  return `<div class="sched-strip${l.length > 1 ? ' multi' : ''}" id="sbox">${l.map(card).join('')}</div>`;
+}
+function openSched() {
+  const l = schedSorted(S.data?.scheduled);
+  document.querySelectorAll('.sheet-bg, .sheet').forEach((x) => x.remove());
+  const bg = document.createElement('div'); bg.className = 'sheet-bg';
+  const sh = document.createElement('div'); sh.className = 'sheet';
+  sh.innerHTML = `<div class="grab"></div><button class="x" aria-label="Fermer">×</button><h2>Programmé</h2>
+    <div class="muted" style="font-size:14px;margin-top:2px">${l.length} changement${l.length > 1 ? 's' : ''} à venir · s'annulent sur le Mac (ou demande à Claude)</div>${l.map(schedRow).join('')}`;
+  const close = () => { bg.remove(); sh.remove(); };
+  bg.onclick = close; sh.querySelector('.x').onclick = close;
+  document.body.append(bg, sh);
+}
+function toast(msg) {
+  document.querySelectorAll('.toast').forEach((t) => t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+function go(step) {
+  const rg = range();
+  if (step > 0 && !((oldest() || todayKey()) < rg.from)) return;
+  if (step < 0 && S.offset === 0) return;
+  S.offset += step; S.anim = step > 0 ? 'slide-r' : 'slide-l'; render();
+}
+
+
+// glisser : vers la droite = le jour d'avant, vers la gauche = le jour d'après
+let tx = null, ty = null;
+document.addEventListener('touchstart', (e) => { if (e.target.closest?.('.sheet, .player, .chat-v, .tabbar')) { tx = null; return; } const t = e.touches[0]; tx = t.clientX; ty = t.clientY; }, { passive: true });
+document.addEventListener('touchend', (e) => {
+  if (tx == null || !S.data || S.tab !== 'home') return;   // le glisser jour par jour n'existe que sur le tableau de bord
+  const t = e.changedTouches[0]; const dx = t.clientX - tx, dy = t.clientY - ty; tx = null;
+  if (Math.abs(dx) > 55 && Math.abs(dy) < 45) go(dx > 0 ? 1 : -1);
+}, { passive: true });
+
+// ---------- Onglets en bas (comme Fidely) : Commentaires à gauche, Tableau de bord au milieu, WhatsApp à droite ----------
+// Lecture seule : aucune action directe depuis le téléphone, tout passe par Claude (qui demande le oui d'Adama).
+const ICON = {
+  comments: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.5a8 8 0 0 1-8 8 8.2 8.2 0 0 1-3.6-.8L4 20l1.3-4.3a8 8 0 1 1 15.2-4.2z"/><path d="M8.5 10h7M8.5 13.5H13"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 19.5v-6M10 19.5v-13M15 19.5v-9M20 19.5v-12"/></svg>',
+  wa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.8 20.2l1.2-4.1a8.4 8.4 0 1 1 3.1 3z"/><path d="M9.2 7.8c-.4 0-.9.4-.9 1.2 0 2.9 3.6 6.4 6.6 6.6.8 0 1.2-.5 1.2-.9l-.1-.7-1.9-.9-.9.9c-1.2-.5-2.3-1.6-2.8-2.8l.9-.9-.9-1.9z"/></svg>',
+};
+const cnt = (x) => { const n = Number(x); return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0; };
+const short = (s, n) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? `${t.slice(0, n - 1)}…` : t; };
+const since = (iso) => {
+  const t = Date.parse(iso); if (!Number.isFinite(t)) return '';
+  const m = Math.max(0, Math.round((Date.now() - t) / 60000));
+  return m < 1 ? "à l'instant" : m < 60 ? `il y a ${m} min` : m < 48 * 60 ? `il y a ${Math.round(m / 60)} h` : `il y a ${Math.round(m / 1440)} j`;
+};
+const commentsTodo = () => (S.data?.comments?.shops || []).reduce((t, s) => t + cnt(s.todo), 0);
+// Lu / pas lu, propre à CET iPhone (la page est statique, en lecture seule) : les clés des commentaires et réponses déjà
+// montrés, gardées dans le téléphone. Ouvrir l'onglet Commentaires = tout est lu : le badge s'efface.
+const SEEN_KEY = 'adama-shopify-cseen';
+const SEEN_MAX = 400;
+const DAY_MS = 864e5;
+function seenLoad() {
+  try {
+    const x = JSON.parse(read(SEEN_KEY) || 'null');
+    if (x && Array.isArray(x.ids)) return { at: typeof x.at === 'string' ? x.at : null, ids: new Set(x.ids.map(String)) };
+  } catch {}
+  return S.seenMem || { at: null, ids: new Set() };   // stockage indisponible : on retient au moins pendant la visite
+}
+/** Ce qui peut être « nouveau » : les commentaires des clients et les réponses (d'un client ou du pilote automatique). */
+function cEvents(C) {
+  const out = [];
+  for (const c of (C && C.items) || []) {
+    if (!c.ours) out.push({ key: String(c.id), at: c.createdAt, id: c.id });
+    for (const r of c.replies || []) if (r.auto || !r.ours) out.push({ key: `${c.id}>${r.createdAt}`, at: r.createdAt, id: c.id });
+  }
+  return out;
+}
+/**
+ * Pas encore vu sur cet iPhone : clé jamais montrée, et récente — 24 h au tout premier passage (sinon tout l'historique
+ * compterait), 7 jours ensuite (au-delà, la liste des clés gardées a pu être raccourcie).
+ */
+function cUnseen(e, seen, now) {
+  if (seen.ids.has(e.key)) return false;
+  const t = Date.parse(e.at), base = seen.at ? Date.parse(seen.at) : NaN;
+  if (!Number.isFinite(t)) return false;
+  return t > (Number.isFinite(base) ? base - 7 * DAY_MS : now - DAY_MS);
+}
+/** Tout ce qui est affiché devient lu : les clés du moment toujours gardées, les plus anciennes coupées au-delà de SEEN_MAX. */
+function seenMark(evs) {
+  const cur = new Set(evs.map((e) => e.key));
+  const old = [...seenLoad().ids].filter((k) => !cur.has(k));
+  const ids = [...old.slice(Math.max(0, old.length - Math.max(0, SEEN_MAX - cur.size))), ...cur];
+  const at = new Date().toISOString();
+  S.seenMem = { at, ids: new Set(ids) };
+  store(SEEN_KEY, JSON.stringify({ at, ids }));
+}
+/** Badge de l'onglet : commentaires et réponses arrivés depuis la dernière ouverture de l'onglet sur cet iPhone. */
+function commentsUnread() {
+  const C = S.data?.comments;
+  if (!C) return 0;
+  const seen = seenLoad(), now = Date.now();
+  return cEvents(C).filter((e) => cUnseen(e, seen, now)).length;
+}
+// en quittant l'onglet (ou l'appli) : les pastilles « Nouveau » de cette visite s'effacent au prochain affichage
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') S.cPrev = null; });
+
+/** Affiche l'onglet choisi, puis la barre du bas. */
+function render() {
+  if (!S.data) return;
+  if (S.tab === 'comments') renderComments(); else if (S.tab === 'whatsapp') renderWhatsapp(); else renderHome();
+  drawTabs();
+  if (S.data.chat && myCred() && !session()) prepUnlock();   // Face ID prêt dès le toucher sur « Claude », dans chaque onglet
+}
+function setTab(t) {
+  if (!TABS.includes(t)) return;
+  if (t === S.tab) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }   // onglet déjà ouvert : retour en haut (comme iOS)
+  if (S.tab === 'comments') S.cPrev = null;   // onglet quitté : ses « Nouveau » sont lus
+  S.tab = t; store(TAB_KEY, t);
+  render();
+  window.scrollTo(0, 0);
+}
+const badge = (n) => (n > 0 ? `<span class="bd">${n > 99 ? '99+' : n}</span>` : '');
+function drawTabs() {
+  let bar = document.getElementById('tabbar');
+  if (!bar) { bar = document.createElement('nav'); bar.id = 'tabbar'; bar.className = 'tabbar'; bar.setAttribute('aria-label', 'Onglets'); document.body.append(bar); lqBind(bar); }
+  document.documentElement.classList.add('has-tabs');
+  const side = (t, label, icon, n) => `<button class="tab ${S.tab === t ? 'on' : ''}" data-t="${t}" ${S.tab === t ? 'aria-current="page"' : ''}>${icon}<span class="lb">${label}</span>${badge(n)}</button>`;
+  bar.innerHTML = side('comments', 'Commentaires', ICON.comments, commentsUnread())
+    + `<button class="tab mid claude ${diagBusy() ? 'busy' : ''}" data-claude aria-label="Claude : diagnostic du jour"><span class="orb"><span class="cl-ico"></span></span><span class="lb">Claude</span></button>`
+    + `<button class="tab mid ${S.tab === 'home' ? 'on' : ''}" data-t="home" ${S.tab === 'home' ? 'aria-current="page"' : ''}><span class="orb">${ICON.home}</span><span class="lb">Accueil</span></button>`
+    + side('whatsapp', 'WhatsApp', ICON.wa, waTodo(S.data?.whatsapp));
+  bar.querySelectorAll('[data-t]').forEach((b) => (b.onclick = () => { if (!lqAte()) setTab(b.dataset.t); }));
+  const cl = bar.querySelector('[data-claude]'); if (cl) cl.onclick = () => { if (!lqAte()) openChat('diag'); };   // diagnostic du jour (même conversation que sur le Mac)
+  lqMount(bar);
+}
+
+// ---------- Bulle de verre liquide de la barre (02/11) ----------
+// Ressorts : la bulle rattrape sa cible avec un léger rebond ; plus elle va vite, plus elle s'étire (et s'aplatit) dans le sens du glissement.
+const LQ = { bar: null, el: null, p: {}, raf: 0, t: 0, drag: null, ate: 0 };
+const LQ_SPRING = { x: [340, 25, 0.1], w: [340, 25, 0.1], h: [420, 26, 0.1], o: [170, 24, 0.003], l: [380, 26, 0.003] };   // raideur, amortissement, seuil d'arrêt
+const LQ_UP = { w: 96, h: 70 };   // bulle soulevée sous le doigt : plus large qu'un onglet, déborde un peu de la barre (64 px)
+const LQ_CALM = matchMedia('(prefers-reduced-motion: reduce)');
+const lqAte = () => performance.now() - LQ.ate < 500;   // un glisser vient de choisir l'onglet : pas de 2e choix par le clic qui suit
+/** Où la bulle se pose sur l'onglet t : pilule sous l'onglet ; sur l'Accueil, petite et fondue dans le rond bleu. */
+function lqSpot(t) {
+  const b = LQ.bar?.querySelector(`[data-t="${t}"]`);
+  if (!b || !b.offsetWidth) return null;   // barre cachée (conversation ouverte) : on la reposera quand elle revient
+  const x = b.offsetLeft + b.offsetWidth / 2;
+  return b.classList.contains('mid') ? { x, w: 44, h: 40, o: 0, l: 0 } : { x, w: b.offsetWidth - 12, h: 50, o: 1, l: 0 };
+}
+function lqTo(t, jump = false) {
+  if (LQ.drag) return;
+  const s = lqSpot(t); if (s) lqSet(s, jump || !LQ.p.x);
+}
+function lqSet(to, jump) {
+  jump = jump || LQ_CALM.matches;
+  for (const [k, v] of Object.entries(to)) {
+    const p = (LQ.p[k] ||= { v, s: 0, t: v });
+    p.t = v; if (jump) { p.v = v; p.s = 0; }
+  }
+  if (jump) lqPaint();
+  else if (!LQ.raf) { LQ.t = performance.now(); LQ.raf = requestAnimationFrame(lqTick); }
+}
+function lqTick(now) {
+  const dt = Math.min(0.034, Math.max(0, (now - LQ.t) / 1000)); LQ.t = now;
+  let live = false;
+  for (const [k, p] of Object.entries(LQ.p)) {
+    const [K, C, eps] = LQ_SPRING[k];
+    for (let i = 0; i < 4; i++) { p.s += (K * (p.t - p.v) - C * p.s) * dt / 4; p.v += p.s * dt / 4; }
+    if (Math.abs(p.t - p.v) > eps || Math.abs(p.s) > eps * 10) live = true; else { p.v = p.t; p.s = 0; }
+  }
+  lqPaint();
+  LQ.raf = live ? requestAnimationFrame(lqTick) : 0;
+}
+function lqPaint() {
+  const { el, p } = LQ; if (!el || !p.x) return;
+  const st = Math.min(36, Math.abs(p.x.s) * 0.03);   // étirement liquide (vitesse en px/s)
+  const w = Math.max(0, p.w.v + st), h = Math.max(0, p.h.v - st * 0.18);
+  el.style.width = `${w}px`; el.style.height = `${h}px`;
+  el.style.transform = `translate3d(${p.x.v - w / 2}px, ${32 - h / 2}px, 0)`;
+  el.style.opacity = Math.max(0, Math.min(1, p.o.v)).toFixed(3);
+  el.style.setProperty('--lift', Math.max(0, Math.min(1, p.l.v)).toFixed(3));
+}
+/** Barre redessinée : la même bulle y est remise (l'animation en cours continue), posée sur l'onglet ouvert. */
+function lqMount(bar) {
+  if (!LQ.el) { LQ.el = document.createElement('span'); LQ.el.className = 'lq-b'; LQ.el.setAttribute('aria-hidden', 'true'); }
+  const fresh = LQ.bar !== bar; LQ.bar = bar;
+  bar.prepend(LQ.el);
+  if (LQ.drag) lqFollow(LQ.drag.cx); else lqTo(S.tab, fresh);
+}
+function lqUnder(x) {
+  const tabs = [...LQ.bar.querySelectorAll('.tab')];
+  return tabs.find((b) => x >= b.offsetLeft && x < b.offsetLeft + b.offsetWidth)
+    || tabs.reduce((a, b) => (Math.abs(x - b.offsetLeft - b.offsetWidth / 2) < Math.abs(x - a.offsetLeft - a.offsetWidth / 2) ? b : a));
+}
+function lqStart(cx) {
+  if (!LQ.bar?.offsetWidth) return;
+  LQ.drag = { r: LQ.bar.getBoundingClientRect(), x0: cx, cx, moved: false, b: null };
+  lqFollow(cx);
+}
+function lqFollow(cx) {
+  const d = LQ.drag, W = d.r.width; d.cx = cx;
+  if (Math.abs(cx - d.x0) > 8) d.moved = true;
+  lqSet({ x: Math.max(LQ_UP.w / 2 + 2, Math.min(W - LQ_UP.w / 2 - 2, cx - d.r.left)), w: LQ_UP.w, h: LQ_UP.h, o: 1, l: 1 });
+  d.b = lqUnder(cx - d.r.left);
+  for (const t of LQ.bar.querySelectorAll('.tab')) t.classList.toggle('lq', t === d.b);
+}
+/** Doigt levé : la bulle redescend sur l'onglet choisi. Glisser → on ouvre ici l'onglet lâché (true) ; simple toucher → le clic s'en charge. */
+function lqEnd(cancel) {
+  const d = LQ.drag; if (!d) return false;
+  LQ.drag = null;
+  LQ.bar?.querySelectorAll('.tab.lq').forEach((t) => t.classList.remove('lq'));
+  const t = d.b?.dataset.t, claude = !!d.b?.hasAttribute('data-claude');
+  lqTo(!cancel && t ? t : S.tab);
+  if (cancel || !d.moved || !d.b) return false;
+  LQ.ate = performance.now();
+  if (claude) openChat('diag'); else if (t && t !== S.tab) setTab(t);
+  return true;
+}
+function lqBind(bar) {
+  const x = (e) => e.changedTouches[0].clientX;
+  bar.addEventListener('touchstart', (e) => { if (e.touches.length === 1) lqStart(x(e)); else lqEnd(true); }, { passive: true });
+  bar.addEventListener('touchmove', (e) => { if (LQ.drag) lqFollow(x(e)); }, { passive: true });
+  bar.addEventListener('touchend', (e) => { if (lqEnd(false)) e.preventDefault(); });   // glisser : pas de clic en plus
+  bar.addEventListener('touchcancel', () => lqEnd(true));
+  bar.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' && e.button === 0) lqStart(e.clientX); });   // souris (Mac) : mêmes gestes
+  if (lqBind.done) return; lqBind.done = true;
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' && LQ.drag) lqFollow(e.clientX); });
+  addEventListener('pointerup', (e) => { if (e.pointerType === 'mouse') lqEnd(false); });
+  addEventListener('resize', () => lqTo(S.tab, true));
+}
+/** Le Claude du diagnostic travaille (question envoyée d'ici, réponse pas encore là) : le bouton pulse. */
+function diagBusy() {
+  return [...CH.box.values()].some((b) => b.conv === 'diag' && !b.done && !b.reply && !b.error);
+}
+function hideTabs() {
+  document.getElementById('tabbar')?.remove();
+  document.documentElement.classList.remove('has-tabs');
+}
+/** Titre d'onglet + bouton « ✦ Claude » (conversation de l'onglet, la même que sur le Mac). */
+const pageHead = (title, sub, space) => `<div class="pg-h"><div class="pg-t"><h1>${esc(title)}</h1><div>${esc(sub)}</div></div>${S.data.chat ? `<button class="cbtn" data-space="${space}"><span class="cl-ico"></span>Claude</button>` : ''}</div>`;
+const bindHead = () => app.querySelectorAll('[data-space]').forEach((b) => (b.onclick = () => openChat(b.dataset.space)));
+
+// ---------- Onglet Commentaires (pubs Facebook et Instagram, toujours lus en français) ----------
+const TAGS = { question: ['Question', 'blue'], positif: ['Positif', 'green'], negatif: ['Négatif', 'orange'], spam: ['Spam', 'grey'], nuisible: ['Nuisible', 'red'] };
+const LANGS = { de: 'allemand', en: 'anglais', fr: 'français', es: 'espagnol', it: 'italien', nl: 'néerlandais', pt: 'portugais', pl: 'polonais', tr: 'turc', ar: 'arabe', ru: 'russe', ro: 'roumain', hr: 'croate', sr: 'serbe', bs: 'bosnien', sq: 'albanais', el: 'grec', uk: 'ukrainien' };
+// filtres simplifiés (Adama ne gère pas les commentaires : le pilote automatique répond)
+const C_FILTERS = [['all', 'Tout'], ['todo', 'À traiter'], ['hidden', 'Masqués']];
+const C_EMPTY = { todo: 'Rien à traiter : tout a une réponse.', hidden: 'Aucun commentaire masqué.', all: 'Aucun commentaire pour l\'instant.' };
+const cMatch = (c, f) => (f === 'todo' ? !!c.todo : f === 'hidden' ? !!c.hidden : true);
+/** Traduction française d'un texte, ou null tant qu'elle n'est pas là : jamais l'original (allemand…) à sa place. */
+function frText(text, fr, lang) {
+  const t = String(text ?? '').trim(), f = String(fr ?? '').trim();
+  if (!t) return '';
+  if (!f) return null;
+  if (f === t && lang && lang !== 'fr') return null;   // recopié tel quel : pas encore traduit
+  return f;
+}
+const WAIT_TR = 'Traduction en cours…';
+/** Ligne du pilote automatique : ce qu'il fait, et ce qu'il a fait aujourd'hui (réglé sur le Mac). */
+function pilotLine(A, blocked) {
+  const t = A.today || {};
+  const r = cnt(t.replied), h = cnt(t.hidden);
+  const done = `aujourd'hui ${r} réponse${r > 1 ? 's' : ''}${h ? `, ${h} masqué${h > 1 ? 's' : ''}` : ''}`;
+  const on = !!A.enabled;
+  const rest = !on ? 'les réponses passent par toi' : blocked ? 'Meta a coupé l\'accès, il reprend tout seul' : done;
+  return `<div class="pilot ${on ? (blocked ? 'paused' : 'on') : ''}"><i></i><span><b>Pilote automatique : ${!on ? 'arrêté' : blocked ? 'en pause' : 'activé'}</b> · ${esc(rest)}</span></div>`;
+}
+function commentCard(c, showShop, fresh) {
+  const tg = TAGS[c.tag];
+  const who = c.author ? (c.platform === 'ig' ? `@${c.author}` : c.author) : 'Inconnu';
+  const ads = (c.ads || []).slice(0, 2).join(' · ');
+  const where = [showShop ? c.shopName : '', ads ? `Pub ${ads}` : ''].filter(Boolean).join(' · ');
+  const text = String(c.text ?? '').trim();
+  const fr = frText(c.text, c.fr, c.lang);
+  const lang = LANGS[c.lang] || (c.lang ? String(c.lang).toUpperCase() : '');
+  const autoOn = !!S.data.comments?.auto?.enabled;
+  // une seule étiquette d'état : masqué, sinon à traiter, sinon le genre (question, positif…)
+  const pill = c.hidden ? (c.autoHidden ? '' : '<span class="tg t-grey">Masqué</span>') : c.todo ? '<span class="tg t-orange">À traiter</span>' : tg ? `<span class="tg t-${tg[1]}">${tg[0]}</span>` : '';
+  // l'original reste à portée (replié), seulement s'il diffère de ce qui est affiché
+  const orig = text && fr !== text ? `<details class="cm-or"><summary>${fr == null ? 'Voir l\'original' : 'Original'}${lang && c.lang !== 'fr' ? ` · ${esc(lang)}` : ''}</summary><p>${esc(text)}</p></details>` : '';
+  // réponses : la traduction française en grand ; celle du pilote automatique porte « Auto » ; le texte envoyé reste replié
+  const reps = (c.replies || []).map((r) => {
+    const rt = String(r.text ?? '').trim();
+    const rf = frText(r.text, r.fr, r.lang || null);
+    const ro = rt && rf !== rt ? `<details class="cm-or"><summary>${rf == null ? 'Voir l\'original' : 'Original'}</summary><p>${esc(rt)}</p></details>` : '';
+    return `<div class="rp ${r.ours ? 'me' : ''} ${r.hidden ? 'dim' : ''}"><b>${r.ours ? 'Toi' : esc(r.author || 'Réponse')}${r.auto ? '<span class="at">Auto</span>' : ''}</b>${rf == null ? `<span class="wait">${WAIT_TR}</span>` : esc(rf)}${ro}</div>`;
+  }).join('');
+  return `<div class="card cm ${c.hidden ? 'dim' : ''} ${fresh ? 'new' : ''}">
+    <div class="cm-h">${c.platform === 'ig' ? '<span class="pf ig">IG</span>' : '<span class="pf fb">FB</span>'}<b class="au">${esc(who)}</b><span class="ti">${esc(since(c.createdAt))}</span><span class="sp"></span>${pill}</div>
+    ${where || fresh ? `<div class="cm-ad">${fresh ? '<span class="cm-nw">Nouveau</span>' : ''}${fresh && where ? ' · ' : ''}${esc(where)}</div>` : ''}
+    ${fr == null ? `<div class="cm-fr wait">${WAIT_TR}</div>` : `<div class="cm-fr">${fr ? esc(fr) : '<span class="muted">(sans texte)</span>'}</div>`}
+    ${orig}
+    ${c.autoHidden ? `<div class="cm-note">Masqué automatiquement (${c.tag === 'nuisible' ? 'nuisible' : 'spam'})</div>` : ''}
+    ${reps ? `<div class="rps">${reps}</div>` : ''}
+    ${S.data.chat && !c.ours && (c.todo || !autoOn) ? `<button class="soft-btn" data-r="${esc(c.id)}"><span class="cl-ico"></span>Répondre avec Claude</button>` : ''}
+  </div>`;
+}
+function renderComments() {
+  const C = S.data.comments;
+  const head = pageHead('Commentaires', 'Facebook et Instagram · en français', 'comments');
+  if (!C) { app.innerHTML = `${head}<div class="empty">Les commentaires arrivent à la prochaine mise à jour du Mac.</div>`; bindHead(); return; }
+  // onglet ouvert = lu (le badge s'efface) ; la date de lecture d'AVANT l'ouverture sert aux pastilles « Nouveau »,
+  // gardées jusqu'à ce qu'Adama quitte l'onglet
+  if (!S.cPrev) S.cPrev = seenLoad();
+  const evs = cEvents(C), now = Date.now();
+  const fresh = new Set(evs.filter((e) => cUnseen(e, S.cPrev, now)).map((e) => e.id));
+  seenMark(evs);
+  const shops = C.shops || [], items = C.items || [];
+  if (S.cShop !== 'all' && !shops.some((s) => s.id === S.cShop)) S.cShop = 'all';
+  if (!C_FILTERS.some(([k]) => k === S.cFilter)) S.cFilter = 'all';
+  const mine = items.filter((c) => S.cShop === 'all' || c.shopId === S.cShop);
+  const found = mine.filter((c) => cMatch(c, S.cFilter));
+  const news = found.filter((c) => fresh.has(c.id));
+  const list = [...news, ...found.filter((c) => !fresh.has(c.id))];   // nouveaux d'abord
+  const split = news.length > 0 && news.length < list.length;
+  const fb = !!C.connected?.fb, ig = !!C.connected?.ig;
+  const blocked = /access blocked/i.test(S.data?.comments?.connected?.why || '');
+  const A = C.auto && typeof C.auto === 'object' ? C.auto : null;
+  const off = blocked ? 'Meta a coupé l\'accès de l\'appli pour l\'instant : commentaires pas relus.'
+    : !fb && !ig ? 'Facebook et Instagram pas encore branchés : à faire sur le Mac (Réglages → Connexion Meta)'
+    : !fb ? 'Facebook pas encore branché : à faire sur le Mac (Réglages → Connexion Meta)'
+    : !ig ? 'Instagram pas encore branché : à faire sur le Mac (Réglages → Connexion Meta)' : '';
+  const todo = commentsTodo();
+  const showShop = S.cShop === 'all' && shops.length > 1;
+  const cards = list.map((c, i) => `${split && i === 0 ? `<div class="sec new">Nouveau <b>${news.length}</b></div>` : ''}${split && i === news.length ? '<div class="sec">Déjà vus</div>' : ''}${commentCard(c, showShop, fresh.has(c.id))}`).join('');
+  const empty = S.cFilter === 'todo' && A?.enabled ? 'Rien à traiter : le pilote automatique répond aux clients.' : C_EMPTY[S.cFilter] || C_EMPTY.all;
+  app.innerHTML = `${head}
+    <div class="pg-u">${C.updatedAt ? `Lus chez Meta ${esc(since(C.updatedAt))}` : 'Pas encore lus chez Meta'}${todo ? ` · <b class="orange">${todo} à traiter</b>` : ''}</div>
+    ${A ? pilotLine(A, blocked) : ''}
+    ${off ? `<div class="off">${esc(off)}</div>` : ''}
+    ${shops.length > 1 ? `<div class="chips">${[['all', 'Toutes', 0], ...shops.map((s) => [s.id, s.name, cnt(s.todo)])].map(([id, name, n]) =>
+      `<button class="chip ${S.cShop === id ? 'on' : ''}" data-s="${esc(id)}">${esc(name)}${n ? ` (${n})` : ''}</button>`).join('')}</div>` : ''}
+    <div class="seg f3">${C_FILTERS.map(([k, l]) => { const n = k === 'todo' ? mine.filter((c) => c.todo).length : 0; return `<button data-f="${k}" class="${S.cFilter === k ? 'on' : ''}">${l}${n ? ` (${n})` : ''}</button>`; }).join('')}</div>
+    ${list.length ? cards : `<div class="empty">${empty}</div>`}
+    <div class="foot">${A?.enabled ? 'Les réponses partent toutes seules · ' : ''}Tous les commentaires à traiter + les 30 plus récents${A?.enabled ? '' : ' · les réponses passent par Claude'}</div>`;
+  bindHead();
+  app.querySelectorAll('[data-s]').forEach((b) => (b.onclick = () => { S.cShop = b.dataset.s; render(); }));
+  app.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => { S.cFilter = b.dataset.f; render(); }));
+  app.querySelectorAll('[data-r]').forEach((b) => (b.onclick = () => {
+    const c = items.find((x) => x.id === b.dataset.r); if (!c) return;
+    openChat('comments', { draft: `Propose une réponse au commentaire ${c.id} (« ${short(frText(c.text, c.fr, c.lang) || c.text, 220)} »)` });   // Adama relit puis envoie
+  }));
+}
+
+// ---------- Onglet WhatsApp (agents fournisseurs), comme la page du Mac (21/10) ----------
+// En haut 3 cases « À toi / À l'agent / Au client » (à qui d'agir ; « Chez l'agent / Chez le client » sur le Mac) ; dessous une ligne par sujet, dépliable, avec UNE action
+// qui ouvre Claude, texte posé dans le champ : rien ne part tout seul, Claude demande le oui d'Adama avant d'envoyer.
+const WA_CHECK = 'Check rapide : WhatsApp + réponses clients Gmail';
+const waRefs = (p) => (p.orders.length ? ` (${p.orders.join(', ')})` : '');
+const WA_BOX = [
+  { id: 'adama', label: 'À toi', tone: 'orange', empty: 'Rien à faire pour toi', action: 'Régler avec Claude',
+    ask: (p) => `Aide-moi à régler : ${p.title}${waRefs(p)}. Dis-moi ce qu'il faut faire et prépare le message exact.` },
+  { id: 'agent', label: 'À l\'agent', tone: 'blue', empty: 'Rien en attente chez l\'agent', action: 'Relancer l\'agent',
+    ask: (p) => `Relance l'agent pour : ${p.title}${waRefs(p)}. Propose-moi le message exact (en anglais, court).` },
+  { id: 'client', label: 'Au client', tone: 'grey', empty: 'Rien en attente chez un client', action: 'Voir avec Claude',
+    ask: (p) => `Fais le point sur : ${p.title}${waRefs(p)}. Où on en est avec le client ?` },
+];
+/** Case d'un sujet : à qui d'agir (Adama, l'agent, sinon le client — comme la page du Mac). */
+function waBoxOf(p) {
+  return p.waiting === 'adama' ? 'adama' : p.waiting === 'agent' ? 'agent' : 'client';
+}
+const WA_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.7 2.7L16 9.7"/></svg>';
+/** Points à suivre : la version rangée en français quand le Mac l'a, sinon les cases ouvertes telles quelles, dans « À toi » (pas encore classées). */
+function waPoints(W) {
+  const arr = (x) => (Array.isArray(x) ? x : []);
+  if (Array.isArray(W?.points)) {
+    return W.points.map((p, i) => ({ id: String(p.id || `p${i}`), title: String(p.title || ''), detail: String(p.detail || ''), orders: arr(p.orders).map(String),
+      waiting: p.waiting, since: String(p.since || ''), sub: arr(p.sub).map(String) }));
+  }
+  return arr(W?.open).map((o, i) => ({ id: `o${i}`, title: String(o.text || ''), detail: '', orders: [], waiting: 'adama', since: '', sub: arr(o.sub).map(String) }));
+}
+/** Badge de l'onglet : ce qui attend Adama (case « À toi »). */
+function waTodo(W) {
+  return waPoints(W).filter((p) => waBoxOf(p) === 'adama').length;
+}
+/** « 20/10 23:56 » : l'heure du dernier message lu, une fois rangée en français par le Mac. */
+function waReadAt(W) {
+  const l = W?.lastReadFr;
+  return l && typeof l === 'object' && l.when ? String(l.when) : '';
+}
+function waRow(p, box) {
+  const more = p.orders.length > 3 ? p.orders.length - 3 : 0;
+  const meta = p.orders.slice(0, 3).map((o) => `<span class="wa-ord">${esc(o)}</span>`).join('') + (more ? `<span class="wa-ord">+${more}</span>` : '')
+    + (p.since ? `<span class="wa-since">${esc(p.since)}</span>` : '');
+  return `<details class="wa-row" data-id="${esc(p.id)}" ${S.waOpen === p.id ? 'open' : ''}>
+    <summary><span class="wa-dot ${box.tone}"></span><div class="wa-row-m"><div class="wa-row-t">${esc(p.title)}</div>${meta ? `<div class="wa-meta">${meta}</div>` : ''}</div><span class="chev">›</span></summary>
+    <div class="wa-row-b">${p.detail ? `<p>${esc(p.detail)}</p>` : ''}${p.sub.map((x) => `<div class="wa-s">${esc(x)}</div>`).join('')}${S.data.chat ? `<button class="soft-btn ${box.id === 'adama' ? 'go' : ''}" data-ask="${esc(p.id)}"><span class="cl-ico"></span>${box.action}</button>` : ''}</div>
+  </details>`;
+}
+const waEv = (e) => { const [d, h] = String(e.when || '').split(' '); return `<div class="wa-ev"><div class="t"><b>${esc(h || d)}</b>${h ? `<small>${esc(d)}</small>` : ''}</div><div class="w">${esc(e.text)}</div></div>`; };
+function renderWhatsapp() {
+  const W = S.data.whatsapp;
+  const head = pageHead('WhatsApp', 'Agents fournisseurs', 'whatsapp');
+  if (!W) { app.innerHTML = `${head}<div class="empty">Le suivi WhatsApp arrive à la prochaine mise à jour du Mac.</div>`; bindHead(); return; }
+  const pts = waPoints(W);
+  const count = Object.fromEntries(WA_BOX.map((b) => [b.id, pts.filter((p) => waBoxOf(p) === b.id).length]));
+  // case choisie par Adama, sinon la première qui a quelque chose (À toi d'abord)
+  const cur = WA_BOX.some((b) => b.id === S.waBox) ? S.waBox : count.adama ? 'adama' : count.agent ? 'agent' : 'client';
+  const box = WA_BOX.find((b) => b.id === cur);
+  const list = pts.filter((p) => waBoxOf(p) === cur);
+  const at = waReadAt(W);
+  const status = [at ? `lu jusqu'à ${at}` : '', W.updatedAt ? `vérifié ${since(W.updatedAt)}` : '', W.fr === 'pending' ? 'mise en français…' : ''].filter(Boolean).join(' · ');
+  const rows = (Array.isArray(W.recent) ? W.recent : W.entries || []).slice(0, 6);
+  app.innerHTML = `${head}
+    <div class="pg-u">${esc(status.charAt(0).toUpperCase() + status.slice(1))}</div>
+    <div class="wa-boxes">${WA_BOX.map((b) => `<button class="wa-box ${b.tone} ${count[b.id] ? 'has' : ''} ${b.id === cur ? 'on' : ''}" data-box="${b.id}" aria-pressed="${b.id === cur}"><b>${count[b.id]}</b><span>${b.label}</span></button>`).join('')}</div>
+    <div class="card wa-list">${list.length ? list.map((p) => waRow(p, box)).join('') : `<div class="wa-done">${WA_OK}${box.empty}</div>`}</div>
+    ${S.data.chat ? '<button class="big-btn" id="wa-check"><span class="cl-ico"></span>Check rapide</button>' : ''}
+    ${rows.length ? `<details class="wa-hist" ${S.waHist ? 'open' : ''}><summary>Historique</summary><div class="card">${rows.map(waEv).join('')}</div></details>` : ''}`;
+  bindHead();
+  const chk = document.getElementById('wa-check'); if (chk) chk.onclick = () => openChat('whatsapp', { draft: WA_CHECK });
+  app.querySelectorAll('[data-box]').forEach((b) => (b.onclick = () => { S.waBox = b.dataset.box; S.waOpen = null; render(); }));
+  app.querySelectorAll('[data-ask]').forEach((b) => (b.onclick = () => {
+    const p = list.find((x) => x.id === b.dataset.ask); if (p) openChat('whatsapp', { draft: box.ask({ ...p, title: short(p.title, 200) }) });
+  }));
+  // une seule ligne dépliée à la fois ; gardée quand les données se rafraîchissent
+  app.querySelectorAll('.wa-row').forEach((el) => el.addEventListener('toggle', () => {
+    if (el.open) { S.waOpen = el.dataset.id; app.querySelectorAll('.wa-row[open]').forEach((o) => { if (o !== el) o.open = false; }); }
+    else if (S.waOpen === el.dataset.id) S.waOpen = null;
+  }));
+  app.querySelector('.wa-hist')?.addEventListener('toggle', (e) => { S.waHist = e.currentTarget.open; });
+}
+
+// ---------- Stats des pubs (21/10) : CPC, CTR, CPM, conversion, coût par achat, ROAS, aux couleurs de la formation ----------
+// Mêmes règles que le Mac (engine.js : classify, buildKpis) ; repères envoyés par le Mac dans shop.ref.
+// g = bon (vert), o = limite (orange), r = mauvais (rouge), '' = pas de repère
+const ST_COLOR = { g: 'var(--green)', o: 'var(--orange)', r: 'var(--red)' };
+const stStyle = (st) => (ST_COLOR[st] ? `color:${ST_COLOR[st]}` : '');
+/**
+ * Montant dans la devise du compte pub, au centime (CPC, CPM) : « 0,45 $ USD ».
+ * tight : case étroite (valeur des cases, ligne CPC · CTR · CPM) → « $ » seul ; « $ USD » débordait, et le titre dit déjà « … $ USD dépensés ».
+ */
+const money2 = (n, cur, tight = false) => (n == null || isNaN(n) ? '—' : `${nf(2).format(n)} ${cur === 'USD' ? (tight ? '$' : '$ USD') : !cur || cur === 'EUR' ? '€' : cur}`);
+/**
+ * Au centime, converti d'office en euros (CPC, CPM et leurs repères : « 0,22 € ») ; sans taux, comme avant (money2).
+ * Espace insécable avant « € » : à 375 px, « mauvais > 0,45 € » ne laisse pas « € » seul sur sa ligne.
+ */
+const eu2 = (n, cur, tight = false) => { const r = rateOf(cur); return r == null ? money2(n, cur, tight) : n == null || isNaN(n) ? '—' : `${nf(2).format(n * r)} €`; };
+/**
+ * Totaux des pubs sur la période (une pub, ou toutes) : dépense (devise du compte pub), achats Meta, impressions, clics.
+ * adDays = [jour, pub, dépense, achats, impressions, clics sur le lien, clics (tous)] : CPC sur les clics lien,
+ * CTR (tous) comme la règle des 1,5 % (clics lien à défaut, anciennes données sans 7e colonne).
+ */
+function adTot(shop, rg, id = null) {
+  const t = { spend: 0, purchases: 0, imp: 0, clk: 0, all: 0 };
+  for (const [day, ad, spend, purch, imp, clk, all] of shop.adDays || []) {
+    if (day < rg.from || day > rg.to || (id && ad !== id)) continue;
+    t.spend += spend; t.purchases += purch; t.imp += imp || 0; t.clk += clk || 0; t.all += all ?? clk ?? 0;
+  }
+  return { ...t, cpc: t.clk ? t.spend / t.clk : null, ctr: t.imp ? t.all / t.imp : null, cpm: t.imp ? (t.spend / t.imp) * 1000 : null };
+}
+/** CPC des jours rentables passés : repère de la zone grise (comme le Mac). */
+function cpcRefOf(shop) {
+  const today = todayKey();
+  const good = new Set((shop.days || []).filter((d) => d.day < today && !d.partial && !d.costMissing && d.margin != null && d.margin > 0).map((d) => d.day));
+  let sp = 0, ck = 0;
+  for (const [day, , spend, , , clk] of shop.adDays || []) if (good.has(day)) { sp += spend; ck += clk || 0; }
+  return ck ? sp / ck : null;
+}
+function cpcSt(cpc, ctr, R, ref) {
+  if (cpc == null || R?.cpc == null) return '';
+  if (cpc <= R.cpc) return 'g';
+  if (R.cpcGrey != null && cpc <= R.cpcGrey) return ctr != null && ctr >= R.ctr && (ref == null || cpc <= (R.cpcRefK || 1.15) * ref) ? 'g' : 'o';
+  return 'r';
+}
+const ctrSt = (ctr, R) => (ctr == null || R?.ctr == null ? '' : ctr >= R.ctr ? 'g' : 'r');
+const cpmSt = (cpm, R) => (cpm == null || R?.cpm == null ? '' : cpm <= R.cpm ? 'g' : 'o');
+const cvrSt = (cvr, sessions, R) => (cvr == null || sessions < 20 || R?.cvr == null ? '' : Math.abs(cvr - R.cvr) <= (R.cvrBand || 0) + 1e-12 ? 'o' : cvr >= R.cvr ? 'g' : 'r');
+/**
+ * J1-J2 de diffusion : trop tôt pour juger (formation : le CPC démarre haut et baisse, on regarde à J3) → aucune couleur.
+ * Jour de départ = 1er jour où les pubs ont dépensé.
+ */
+function adYoung(shop, rg) {
+  let first = null;
+  for (const [day, , spend] of shop.adDays || []) if (spend > 0 && (!first || day < first)) first = day;
+  if (!first) return true;
+  return Math.round((pk(rg.to) - pk(first)) / 864e5) < 2;
+}
+/** Santé des pubs sur la période (pastille du bouton « Pub ») : CPC et CTR. */
+function adHealth(shop, rg) {
+  const R = shop.ref; if (!R || adYoung(shop, rg)) return '';
+  const a = adTot(shop, rg);
+  const s = [cpcSt(a.cpc, a.ctr, R, cpcRefOf(shop)), ctrSt(a.ctr, R)].filter(Boolean);
+  return s.includes('r') ? 'r' : s.includes('o') ? 'o' : s.length ? 'g' : '';
+}
+/** Pub par commande et ROAS de la boutique (devise de la boutique), avec leurs seuils : 15 % de marge visée, point mort ; ord = commandes (0 : pas encore de commande, pas un coût manquant ; null : jamais lues). */
+function shopEcon(shop, rg) {
+  const rows = rowsFor(shop, rg.from, rg.to);
+  const rev = rows.reduce((t, r) => t + (r.revenue || 0), 0), sp = rows.reduce((t, r) => t + (r.spend || 0), 0), ord = rows.reduce((t, r) => t + (r.orders || 0), 0);
+  const known = rows.length && rows.every((r) => r.profit != null && !r.costMissing);
+  const profit = known ? rows.reduce((t, r) => t + r.profit, 0) : null;
+  const c = profit != null && rev > 0 ? (profit + sp) / rev : null;   // marge avant pub
+  const aov = ord ? rev / ord : null, m = shop.ref?.margin ?? 0.15;
+  return { cpa: ord && sp ? sp / ord : null, roas: sp ? rev / sp : null, max15: c != null && aov != null ? aov * (c - m) : null, max0: c != null && aov != null ? aov * c : null,
+    be: c > 0 ? 1 / c : null, r15: c > m ? 1 / (c - m) : null, m, ord: rows.some((r) => r.orders != null) ? ord : null };   // null : commandes jamais lues
+}
+const cpaSt = (v, E) => (v == null || E.max15 == null ? '' : v <= E.max15 ? 'g' : v <= E.max0 ? 'o' : 'r');
+const roasSt = (v, E) => (v == null || E.be == null ? '' : E.r15 != null && v >= E.r15 ? 'g' : v >= E.be ? 'o' : 'r');
+/** Les 6 cases en haut de la liste des pubs. */
+function adKpis(shop, rg) {
+  const R = shop.ref || {}, cur = R.curAd || shop.budgetCur || 'EUR';   // devise du compte pub : couleurs calculées dedans, affichage en euros (eu2)
+  const a = adTot(shop, rg), ref = cpcRefOf(shop), E = shopEcon(shop, rg);
+  const t = sum(rowsFor(shop, rg.from, rg.to));
+  const young = adYoung(shop, rg);   // J1-J2 : chiffres affichés, sans couleur
+  const cs = young ? '' : cpcSt(a.cpc, a.ctr, R, ref), vs = young ? '' : cvrSt(t.cvr, t.sessions, R);
+  // la petite mention dit pourquoi la couleur (zone grise sauvée par le CTR, conversion à la limite…) ; repère converti (« bon ≤ 0,22 € »)
+  const cpcHint = R.cpc == null ? (R.market === 'US' ? 'pas de repère aux USA' : 'pas de repère') : a.cpc == null || a.cpc <= R.cpc ? `bon ≤ ${eu2(R.cpc, cur)}`
+    : R.cpcGrey != null && a.cpc <= R.cpcGrey ? (cs === 'g' ? 'zone grise · CTR bon' : 'zone grise · à surveiller') : `mauvais > ${eu2(R.cpcGrey ?? R.cpc, cur)}`;
+  const cvrHint = R.cvr == null ? '' : t.cvr != null && t.sessions < 20 ? `peu de visites (${int(t.sessions)})` : vs === 'o' ? `à la limite de ${pct(R.cvr)}` : `bon ≥ ${pct(R.cvr)}`;
+  const k = (label, val, st, hint) => `<div class="k"><span>${label}</span><b style="${stStyle(st)}">${val}</b><small>${esc(hint)}</small></div>`;
+  return `<div class="kp">
+    ${k('CPC', eu2(a.cpc, cur, true), cs, cpcHint)}
+    ${k('CTR (tous)', a.ctr == null ? '—' : pct(a.ctr), young ? '' : ctrSt(a.ctr, R), R.ctr != null ? `bon ≥ ${pct(R.ctr)}` : '')}
+    ${k('CPM', eu2(a.cpm, cur, true), young ? '' : cpmSt(a.cpm, R), R.cpm != null ? `bon ≤ ${eu2(R.cpm, cur)}` : 'pas de repère ici')}
+    ${k('Conversion', t.cvr == null ? '—' : pct(t.cvr), vs, cvrHint)}
+    ${k('Pub / commande', E.cpa == null ? '—' : eur(E.cpa), young ? '' : cpaSt(E.cpa, E), E.max15 != null ? `max ${eur(E.max15)} (${Math.round(E.m * 100)} %)` : E.ord === 0 ? 'pas encore de commande' : t.costMissing ? 'coût agent manquant' : '')}
+    ${k('ROAS', E.roas == null ? '—' : nf(2).format(E.roas), young ? '' : roasSt(E.roas, E), E.r15 != null ? `bon ≥ ${nf(2).format(E.r15)}` : E.be != null ? `point mort ${nf(2).format(E.be)}` : '')}
+  </div><div class="kp-l">${young ? 'J1-J2 : trop tôt pour juger, couleurs à partir de J3 (formation : le CPC démarre haut puis baisse)' : 'Couleurs de la formation : vert bon · orange limite · rouge mauvais'}</div>`;
+}
+/** Ligne « CPC · CTR · CPM » d'une pub ou d'un ensemble, en couleur (calculée dans la devise du compte pub), montants en euros. */
+function adLine(t, R, ref, young = false, cur = R?.curAd || 'EUR') {
+  if (!t.imp) return '';
+  if (young) R = { ...R, cpc: null, ctr: null, cpm: null };   // J1-J2 : pas de couleur
+  return `<span class="st"><b style="${stStyle(cpcSt(t.cpc, t.ctr, R, ref))}">CPC ${eu2(t.cpc, cur, true)}</b> · <b style="${stStyle(ctrSt(t.ctr, R))}">CTR ${pct(t.ctr)}</b> · <b style="${stStyle(cpmSt(t.cpm, R))}">CPM ${eu2(t.cpm, cur, true)}</b></span>`;
+}
+
+// ---------- Pubs par ensemble (bouton « Pub ») ----------
+/** Règles en cours (STRATEGIE GENERALE.md), comme la page Stratégie du Mac. */
+function openStrategy() {
+  document.querySelectorAll('.sheet-bg, .sheet').forEach((x) => x.remove());
+  const bold = (t) => esc(t).split('**').map((p, i) => (i % 2 ? `<b>${p}</b>` : p)).join('');
+  const bg = document.createElement('div'); bg.className = 'sheet-bg';
+  const sh = document.createElement('div'); sh.className = 'sheet';
+  sh.innerHTML = `<div class="grab"></div><button class="x" aria-label="Fermer">×</button><h2>Stratégie</h2>
+    ${(S.data.strategy?.sections || []).map((s) => `<h3 class="st-h">${esc(s.title)}</h3><ul class="st-l">${s.items.map((x) => `<li>${bold(x)}</li>`).join('')}</ul>`).join('')}`;
+  document.body.append(bg, sh);
+  const close = () => { bg.remove(); sh.remove(); };
+  bg.onclick = close; sh.querySelector('.x').onclick = close;
+}
+
+function openAds(i) {
+  const shop = S.data?.shops?.[i]; if (!shop) return;
+  const rg = range(shop);   // jour de la boutique (comme sa carte)
+  const meta = shop.adMeta || {};
+  const agg = new Map();
+  for (const [day, id, spend, purch, imp, clk, all] of shop.adDays || []) {
+    if (day < rg.from || day > rg.to) continue;
+    const a = agg.get(id) || { id, spend: 0, purchases: 0, imp: 0, clk: 0, all: 0 }; a.spend += spend; a.purchases += purch; a.imp += imp || 0; a.clk += clk || 0; a.all += all ?? clk ?? 0; agg.set(id, a);
+  }
+  for (const [id, m] of Object.entries(meta)) if (!agg.has(id) && m[4] === 'ACTIVE') agg.set(id, { id, spend: 0, purchases: 0, imp: 0, clk: 0, all: 0 });
+  const R = shop.ref, cref = cpcRefOf(shop), ac = R?.curAd || shop.budgetCur || 'EUR';   // pubs en devise du compte pub, affichées en euros (eu0, eu2)
+  const young = adYoung(shop, rg);   // J1-J2 : lignes des pubs sans couleur
+  const rates = (x) => ({ ...x, cpc: x.clk ? x.spend / x.clk : null, ctr: x.imp ? x.all / x.imp : null, cpm: x.imp ? (x.spend / x.imp) * 1000 : null });   // CPC : clics lien ; CTR (tous)
+  const sets = new Map();
+  for (const a of agg.values()) {
+    const m = meta[a.id] || [a.id, 'Ensemble'];
+    const k = m[5] || m[1];
+    const set = sets.get(k) || { name: m[1], spend: 0, imp: 0, clk: 0, all: 0, ads: [] };
+    set.spend += a.spend; set.imp += a.imp; set.clk += a.clk; set.all += a.all; set.ads.push({ ...a, name: m[0], thumb: m[2], preview: m[3], frame: m[6] || null }); sets.set(k, set);
+  }
+  const list = [...sets.values()].sort((x, y) => y.spend - x.spend);
+  const total = list.reduce((t, x) => t + x.spend, 0);
+  const label = S.mode === 'day' ? (S.offset === 0 ? "aujourd'hui" : S.offset === 1 ? 'hier' : dLong(rg.from)) : `${rg.n} jours`;
+  const row = (a) => {
+    const inner = `${a.thumb ? `<img src="${esc(a.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="ph"></div>'}
+      <div class="nm"><b>${esc(a.name)}</b><small>${a.purchases ? `${a.purchases} achat${a.purchases > 1 ? 's' : ''} · ${eu0(a.spend / a.purchases, ac)} / achat` : a.spend ? 'aucun achat' : 'pas de dépense'}</small>${adLine(rates(a), R, cref, young, ac)}</div>
+      <div class="sp2">${eu0(a.spend, ac)}</div>`;
+    // le lecteur Meta s'ouvre DANS l'appli (pas l'appli Facebook) ; sinon, lien d'aperçu en secours
+    if (a.frame) return `<button class="adrow ${a.spend ? '' : 'zero'}" data-frame="${esc(a.frame)}" data-name="${esc(a.name)}">${inner}</button>`;
+    return a.preview ? `<a class="adrow ${a.spend ? '' : 'zero'}" href="${esc(a.preview)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="adrow ${a.spend ? '' : 'zero'}">${inner}</div>`;
+  };
+  const bg = document.createElement('div'); bg.className = 'sheet-bg';
+  const sh = document.createElement('div'); sh.className = 'sheet';
+  sh.innerHTML = `<div class="grab"></div><button class="x" aria-label="Fermer">×</button>
+    <h2>Pubs · ${esc(shop.name)} ${flagOf(shop.market)}</h2><div class="muted" style="font-size:14px;margin-top:2px">${esc(label)} · ${eu0(total, ac)} dépensés · touche une pub pour la voir</div>
+    ${R && list.length ? adKpis(shop, rg) : ''}
+    ${(() => {   // ventes Shopify que Meta n'a pas (encore) reliées à une pub
+      const ord = sum(rowsFor(shop, rg.from, rg.to)).orders || 0, buys = list.reduce((t, x) => t + x.ads.reduce((u, a) => u + (a.purchases || 0), 0), 0);
+      if (!(ord > buys)) return '';
+      const n = ord - buys;
+      return `<div class="att-note">Shopify : ${ord} vente${ord > 1 ? 's' : ''} · Meta en relie ${buys} à une pub. ${n} ${n > 1 ? 'ne sont pas encore reliées' : 'n\'est pas encore reliée'} à une pub : Meta compte ses ventes avec quelques heures de retard, ou la vente ne vient pas d'une pub.</div>`;
+    })()}
+    ${list.length ? list.map((x) => {
+      const buys = x.ads.reduce((t, a) => t + a.purchases, 0);
+      return `<details class="adset"><summary><div class="t"><b>${esc(x.name)}</b><small>${x.ads.length} pub${x.ads.length > 1 ? 's' : ''} · ${buys} achat${buys > 1 ? 's' : ''}${buys ? ` · ${eu0(x.spend / buys, ac)} / achat` : ''}</small>${adLine(rates(x), R, cref, young, ac)}</div><div class="v">${eu0(x.spend, ac)}</div><span class="chev">›</span></summary>${x.ads.sort((p, q) => q.spend - p.spend).map(row).join('')}</details>`;
+    }).join('') : '<div class="empty">Aucune pub sur cette période.</div>'}`;
+  const close = () => { bg.remove(); sh.remove(); };
+  bg.onclick = close; sh.querySelector('.x').onclick = close;
+  sh.querySelectorAll('button.adrow[data-frame]').forEach((b) => (b.onclick = () => playAd(b.dataset.frame, b.dataset.name)));
+  document.body.append(bg, sh);
+}
+function playAd(src, name) {
+  const p = document.createElement('div'); p.className = 'player';
+  p.innerHTML = `<div class="player-h"><b>${esc(name)}</b><button class="x" aria-label="Fermer">×</button></div>
+    <div class="player-f"><span class="player-wait">Chargement de la pub…</span><iframe src="${esc(src)}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe></div>`;
+  p.querySelector('iframe').onload = (e) => e.target.classList.add('ok');
+  p.querySelector('.x').onclick = () => p.remove();
+  document.body.append(p);
+}
+
+// ---------- Chat Claude (design/MOBILE-CHAT.md) ----------
+// Message chiffré (clé reçue dans les données chiffrées) + signé par Face ID → ntfy → le Mac → Claude → réponse chiffrée.
+const NTFY = 'https://ntfy.sh';
+const RP = 'step-international.github.io';
+const CRED = 'adama-shopify-chat-cred';
+const b64e = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const b64ue = (buf) => b64e(new Uint8Array(buf)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64ud = (s) => b64(String(s).replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((String(s).length + 3) % 4));
+const rid = () => b64ue(crypto.getRandomValues(new Uint8Array(16)));
+// SHA-256 synchrone : Face ID doit être demandé tout de suite après le toucher (Safari refuse s'il y a une attente avant)
+const sha = (txt) => {
+  const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const m = new TextEncoder().encode(txt), l = m.length, n = ((l + 9 + 63) >> 6) << 6, b = new Uint8Array(n);
+  b.set(m); b[l] = 0x80; const dv = new DataView(b.buffer); dv.setUint32(n - 4, l * 8); dv.setUint32(n - 8, Math.floor(l / 0x20000000));
+  const H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19], W = new Uint32Array(64);
+  const r = (x, k) => (x >>> k) | (x << (32 - k));
+  for (let o = 0; o < n; o += 64) {
+    for (let i = 0; i < 16; i++) W[i] = dv.getUint32(o + i * 4);
+    for (let i = 16; i < 64; i++) W[i] = (W[i - 16] + (r(W[i - 15], 7) ^ r(W[i - 15], 18) ^ (W[i - 15] >>> 3)) + W[i - 7] + (r(W[i - 2], 17) ^ r(W[i - 2], 19) ^ (W[i - 2] >>> 10))) | 0;
+    let [a, bb, c, d, e, f, g, h] = H;
+    for (let i = 0; i < 64; i++) {
+      const t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + W[i]) | 0;
+      const t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & bb) ^ (a & c) ^ (bb & c))) | 0;
+      h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+    }
+    H[0] = (H[0] + a) | 0; H[1] = (H[1] + bb) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0; H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+  }
+  const out = new Uint8Array(32); const ov = new DataView(out.buffer); H.forEach((x, i) => ov.setUint32(i * 4, x >>> 0)); return out;
+};
+let chatKeyP = null, chatKeyRaw = null;
+const chatKey = () => { if (chatKeyRaw !== S.data.chat.key) { chatKeyRaw = S.data.chat.key; chatKeyP = crypto.subtle.importKey('raw', b64(chatKeyRaw), 'AES-GCM', false, ['encrypt', 'decrypt']); } return chatKeyP; };
+async function seal(obj) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await chatKey(), new TextEncoder().encode(JSON.stringify(obj))));
+  const all = new Uint8Array(12 + ct.length); all.set(iv); all.set(ct, 12);
+  return b64e(all);
+}
+async function unseal(str) {
+  const buf = b64(str);
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.subarray(0, 12) }, await chatKey(), buf.subarray(12))));
+}
+const myCred = () => read(CRED);
+const forgetCred = () => { store(CRED, null); store(CRED + ':ok', null); store(SESS, null); };
+// Session Face ID : Face ID à l'ouverture, puis 1 h tant qu'il écrit (12 h max) ; le secret n'est connu que de l'iPhone et du Mac
+const SESS = 'adama-shopify-chat-sess';
+const IDLE = 60 * 60 * 1000, SMAX = 12 * 3600 * 1000;
+function session() {
+  let x = null; try { x = JSON.parse(read(SESS) || 'null'); } catch {}
+  if (!x || Date.now() - x.last > IDLE || Date.now() - x.start > SMAX) { if (x) store(SESS, null); return null; }
+  return x;
+}
+const touchSession = (at = Date.now()) => { const x = session(); if (x) { x.last = at; store(SESS, JSON.stringify(x)); } };
+let PREP = null, prepping = null, UNLOCKING = false, UNLOCK_GEN = 0;
+/** Prépare à l'avance (asynchrone) le secret chiffré pour le Mac : au toucher, Face ID part tout de suite (Safari l'exige). */
+function prepUnlock() {
+  if (PREP || prepping || !S.data?.chat?.macPub) return;
+  prepping = (async () => {
+    const eph = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits']);
+    const mac = await crypto.subtle.importKey('jwk', { ...S.data.chat.macPub, ext: true }, { name: 'ECDH', namedCurve: 'P-256' }, false, []);
+    const bits = await crypto.subtle.deriveBits({ name: 'ECDH', public: mac }, eph.privateKey, 256);
+    const kk = await crypto.subtle.importKey('raw', await crypto.subtle.digest('SHA-256', bits), 'AES-GCM', false, ['encrypt']);
+    const secret = crypto.getRandomValues(new Uint8Array(32)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, kk, secret));
+    const all = new Uint8Array(12 + ct.length); all.set(iv); all.set(ct, 12);
+    const pub = await crypto.subtle.exportKey('jwk', eph.publicKey);
+    PREP = { epx: pub.x, epy: pub.y, enc: b64e(all), k: b64e(secret) };
+  })().catch(() => {}).finally(() => { prepping = null; });
+}
+async function hmacOf(kB64, fields) {
+  const key = await crypto.subtle.importKey('raw', b64(kB64), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return b64ue(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(JSON.stringify(fields))));
+}
+// Connecté = le Mac liste cette clé Face ID ; juste après l'activation, tant que les données sont plus vieilles qu'elle, on se fie à la confirmation.
+function paired() {
+  const c = myCred(); if (!c) return false;
+  if ((S.data.chat?.phones || []).includes(c)) { store(CRED + ':ok', null); return true; }
+  let ok = null; try { ok = JSON.parse(read(CRED + ':ok') || 'null'); } catch {}
+  if (ok && ok.c === c && Date.parse(S.data.generatedAt) < ok.at + 120000) return true;
+  forgetCred(); return false;   // oublié côté Mac (ou clés changées) : on réactive
+}
+async function sendEnv(env) {
+  const r = await fetch(`${NTFY}/${S.data.chat.in}`, { method: 'POST', body: await seal(env) });   // > 4 Ko : ntfy en fait une pièce jointe, le Mac la lit
+  if (!r.ok) throw new Error(r.status === 429 ? 'Trop d\'envois d\'un coup : réessaie dans une minute' : 'Envoi impossible (réseau)');
+}
+// Réponses du Mac : lues sur chatOut depuis l'envoi, triées par message (ref) ; 3 s au début puis plus espacé
+const CH = { box: new Map(), since: null, timer: null, view: null, t0: 0 };
+async function bodyOf(m) {
+  if (m.attachment?.url && m.attachment.url.startsWith(`${NTFY}/file/`)) { const r = await fetch(m.attachment.url); return r.text(); }
+  return m.message;
+}
+async function pollOut() {
+  if (!S.data?.chat) return;
+  try {
+    const r = await fetch(`${NTFY}/${S.data.chat.out}/json?poll=1&since=${encodeURIComponent(CH.since || '10m')}`, { cache: 'no-store' });
+    const lines = (await r.text()).split('\n').filter(Boolean);
+    for (const l of lines) {
+      let m; try { m = JSON.parse(l); } catch { continue; }
+      if (m.event !== 'message') continue;
+      CH.since = m.id;
+      let e; try { e = await unseal(await bodyOf(m)); } catch { continue; }
+      const box = CH.box.get(e.ref); if (!box) continue;
+      box.seen = true;
+      if ((e.kind === 'reply' || e.kind === 'unlocked') && cleanUsage(e.usage)) CH.usage = cleanUsage(e.usage);
+      if (e.relock) { store(SESS, null); const bx = CH.box.get(e.ref); if (bx) bx.relock = true; }
+      if (e.unpaired) forgetCred();
+      if (e.kind === 'unlocked') { box.unlocked = e.sid; box.done = true; }
+      else if (e.kind === 'code-set') { box.codeSet = true; box.done = true; }
+      else if (e.kind === 'ack') box.status = e.queued ? 'En attente : Claude finit une autre réponse…' : 'Claude réfléchit…';
+      else if (e.kind === 'code-sent') { box.status = 'Code envoyé en notification'; box.done = true; }
+      else if (e.kind === 'paired') { box.paired = e.credId; box.pairedAt = e.ts; box.done = true; }
+      else if (e.kind === 'reply' || e.kind === 'error') {
+        const k = e.kind === 'reply' ? 'reply' : 'error';
+        box[k + 'Parts'] = box[k + 'Parts'] || {}; box[k + 'Parts'][e.part || 1] = e.text;
+        const n = e.parts || 1;
+        if (Object.keys(box[k + 'Parts']).length >= n) {
+          box[k] = Array.from({ length: n }, (_, i) => box[k + 'Parts'][i + 1] || '').join(''); box.done = true;
+          // conversation ouverte et visible : la réponse est lue → le Mac n'enverra pas de notification
+          if (CV.el && document.visibilityState === 'visible' && !box.readSent) { box.readSent = true; sendEnv({ v: 1, kind: 'read', id: rid(), ts: Date.now(), ref: e.ref }).catch(() => {}); }
+        }
+      }
+    }
+  } catch { /* réseau : on réessaie */ }
+  CH.view?.();
+  if (!CV.el && S.data && document.getElementById('tabbar')) drawTabs();   // réponse arrivée chat fermé : le bouton Claude arrête de pulser
+  const waiting = [...CH.box.values()].filter((b) => !b.done);
+  clearTimeout(CH.timer);
+  if (!waiting.length) return;
+  const age = Date.now() - CH.t0;
+  if (age > 15 * 60000) { for (const b of waiting) { b.done = true; b.status = 'Pas de réponse : regarde sur le Mac.'; } CH.view?.(); if (!CV.el && S.data && document.getElementById('tabbar')) drawTabs(); return; }
+  CH.timer = setTimeout(pollOut, age < 60000 ? 3000 : 10000);
+}
+function watch(id, box) {
+  CH.box.set(id, box); CH.t0 = Date.now();
+  if (!CH.since) CH.since = String(Math.floor(Date.now() / 1000) - 5);
+  setTimeout(() => { if (!box.seen && !box.done) { box.status = 'Le Mac ne répond pas (en veille ?) : ta question partira à son réveil.'; CH.view?.(); } }, 30000);
+  clearTimeout(CH.timer); CH.timer = setTimeout(pollOut, 1500);
+}
+// ---------- Chat : affichage ----------
+// Bloc ```action``` (bouton du Mac) → une ligne lisible. Les montants partent tels quels chez Meta (budget : devise du compte pub)
+// ou Shopify (prix : devise de la boutique) : vraie devise + ≈ € (« Budget 100 $ USD/j ≈ 89 € »). shop = boutique de la conversation.
+const ACT_TXT = (j, shop = CV.shop) => { try { const a = JSON.parse(j.replace(/("(?:id|variantId)"\s*:\s*)(\d+)/g, '$1"$2"')); const w = a.when === 'midnight' ? ' à minuit' : '';
+  const bc = shop?.budgetCur || shop?.cur || 'EUR', pc = shop?.cur || 'EUR';
+  return a.type === 'budget.set' ? `Budget ${realMoney(a.amount, bc, '/j')}${w}` : a.type === 'budget.pct' ? `Budget ${a.pct > 0 ? '+' : ''}${a.pct} %${w}` : a.type === 'price.set' ? `Prix → ${realMoney(a.price, pc)}${a.compareAtPrice ? ` (barré ${realMoney(a.compareAtPrice, pc)})` : ''}${w}` : a.type === 'status.set' ? `${a.status === 'PAUSED' ? 'Pause' : 'Activer'} ${a.name || ''}` : 'Action'; } catch { return 'Action'; } };
+/** Petit Markdown sûr (tout est échappé) : gras, code, titres, listes, tableaux en lignes, blocs de code, actions. */
+function md(text) {
+  const inl = (x) => esc(x).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  const lines = String(text || '').replace(/```action\s*([\s\S]*?)```/g, (_, j) => `\n\u0001${ACT_TXT(j)}\n`).split('\n');
+  let html = '', list = null, code = null;
+  const endList = () => { if (list) { html += `</${list}>`; list = null; } };
+  for (const l of lines) {
+    if (code !== null) { if (/^\s*```/.test(l)) { html += `<pre>${esc(code)}</pre>`; code = null; } else code += (code ? '\n' : '') + l; continue; }
+    if (/^\s*```/.test(l)) { endList(); code = ''; continue; }
+    if (l.startsWith('\u0001')) { endList(); html += `<div class="act">⚡ ${esc(l.slice(1))}<small>bouton dans le chat du Mac</small></div>`; continue; }
+    const li = l.match(/^\s*([-*•]|\d+[.)])\s+(.*)$/);
+    if (li) { const t = /\d/.test(li[1]) ? 'ol' : 'ul'; if (list !== t) { endList(); html += `<${t}>`; list = t; } html += `<li>${inl(li[2])}</li>`; continue; }
+    endList();
+    const h = l.match(/^\s*#{1,4}\s+(.*)$/);
+    if (h) html += `<p class="h">${inl(h[1])}</p>`;
+    else if (/^\s*\|.*\|\s*$/.test(l)) { if (!/^\s*\|[\s:|-]+\|\s*$/.test(l)) html += `<p class="row">${l.trim().slice(1, -1).split('|').map((c) => inl(c.trim())).join(' · ')}</p>`; }
+    else if (l.trim()) html += `<p>${inl(l)}</p>`;
+  }
+  if (code !== null) html += `<pre>${esc(code)}</pre>`;
+  endList();
+  return html;
+}
+// Tout ce qui vient du relais est non fiable : l'utilisation n'est gardée que sous forme de nombres bornés
+const num = (x) => { const n = Number(x); return Number.isFinite(n) ? Math.max(0, Math.min(999, Math.round(n))) : null; };
+const cleanUsage = (u) => { const w = num(u?.week?.pct); if (w == null) return null; const s2 = num(u?.session?.pct); return { week: { pct: w }, session: s2 == null ? null : { pct: s2 } }; };
+const toneOf = (p) => (p >= 90 ? 'var(--red)' : p >= 75 ? 'var(--orange)' : 'var(--green)');
+const bar = (p) => `<i><em style="width:${Math.min(100, p)}%;background:${toneOf(p)}"></em></i>`;
+/** Utilisation de l'abonnement Claude : page principale (ligne) et en-tête du chat (pastille). */
+const usageLine = (raw) => { const u = cleanUsage(raw); return u ? `<div class="ubar">Claude · semaine <b style="color:${toneOf(u.week.pct)}">${u.week.pct} %</b>${bar(u.week.pct)}${u.session ? `<span>session ${u.session.pct} %</span>` : ''}</div>` : ''; };
+const usageChip = (raw) => { const u = cleanUsage(raw); return u ? `<div class="uchip"><span>Semaine<b style="color:${toneOf(u.week.pct)}">${u.week.pct} %</b></span>${bar(u.week.pct)}${u.session ? `<span>session ${u.session.pct} %</span>` : ''}</div>` : ''; };
+
+const MAX_BYTES = 9000;
+const CV = { el: null, shop: null, mode: null, local: [], lastHtml: '', sending: false, resend: null, draft: '' };
+const $cv = (sel) => CV.el?.querySelector(sel);
+const say = (t) => { const e = $cv('#cv-err'); if (e) e.textContent = t; else if (t) toast(t); };
+
+// Conversations qui ne sont pas une boutique : onglets WhatsApp et Commentaires (historique dans S.data.spaces)
+const SPACE_NAMES = { whatsapp: 'WhatsApp', comments: 'Commentaires', diag: 'Diagnostic' };
+/** Conversation : numéro de boutique, ou 'whatsapp' / 'comments'. */
+function convOf(k) {
+  if (typeof k === 'number') return S.data?.shops?.[k] || null;
+  if (!Object.hasOwn(SPACE_NAMES, k)) return null;
+  return (S.data?.spaces || []).find((x) => x.id === k) || { id: k, name: SPACE_NAMES[k], chat: [] };   // Mac pas encore à jour : sans historique
+}
+/** draft : texte pré-rempli dans le champ (Adama relit et envoie lui-même). */
+function openChat(k, { then = null, draft = '' } = {}) {
+  const shop = convOf(k); if (!shop || !S.data.chat) return;
+  closeChat();
+  // conversation rouverte : ses questions envoyées d'ici et pas encore dans l'historique du Mac restent affichées (avec leur réponse)
+  const known = (m, b) => m.role === 'user' && m.text === b.text && Date.parse(m.at) >= (b.ts || 0) - 60000;
+  const local = [...CH.box].filter(([, b]) => b.conv === shop.id && b.text && !(shop.chat || []).some((m) => known(m, b))).map(([id, b]) => ({ id, text: b.text }));
+  Object.assign(CV, { shop, mode: null, local, lastHtml: '', sending: false, after: then, resend: null, draft });
+  const el = document.createElement('div'); el.className = 'chat-v';
+  el.innerHTML = `<header class="cv-h"><button class="cv-back" aria-label="Fermer">‹</button>
+      <div class="cv-t">${then === 'code' ? '<b>Code de la page</b><small>Protégé par Face ID</small>' : `<b>Claude · ${esc(shop.name)} ${flagOf(shop.market)}</b><small>Même conversation que sur le Mac</small>`}</div><div id="cv-u"></div></header>
+    <div class="cv-body" id="cv-body"></div>
+    <div class="cv-in" id="cv-in" hidden><textarea id="cv-ta" rows="1" placeholder="Écris à Claude…"></textarea><button id="cv-send" aria-label="Envoyer" disabled>↑</button></div>`;
+  CV.el = el;
+  document.body.append(el);
+  document.documentElement.classList.add('chat-open');
+  const ta = $cv('#cv-ta'), send = $cv('#cv-send');
+  $cv('.cv-back').onclick = closeChat;
+  ta.oninput = () => { ta.style.height = 'auto'; ta.style.height = `${Math.min(ta.scrollHeight, 132)}px`; send.disabled = !ta.value.trim() || CV.sending; };
+  ta.onfocus = () => setTimeout(() => scrollEnd(true), 300);
+  send.onclick = sendMsg;
+  fitViewport();
+  CH.view = drawChat;
+  drawChat(true);
+  if (CV.mode === 'lock' && PREP) unlock();   // dans le même toucher que la bulle : Face ID tout de suite
+}
+function closeChat() {
+  if (!CV.el) return;
+  CV.el.remove(); CV.el = null; CH.view = null;
+  document.documentElement.classList.remove('chat-open');
+  if (S.data && document.getElementById('tabbar')) drawTabs();   // le bouton Claude pulse si le diagnostic est encore en cours
+}
+// Clavier de l'iPhone : la vue épouse la zone visible ; clavier ouvert → plus de marge de la barre d'accueil
+function fitViewport() {
+  if (!CV.el) return;
+  const vv = window.visualViewport;
+  const h = vv ? vv.height : window.innerHeight;
+  CV.el.style.height = `${h}px`;
+  CV.el.style.top = `${vv ? vv.offsetTop : 0}px`;
+  CV.el.classList.toggle('kb', h < window.innerHeight - 120);
+}
+window.visualViewport?.addEventListener('resize', () => { fitViewport(); scrollEnd(); });
+window.visualViewport?.addEventListener('scroll', fitViewport);
+function scrollEnd(force = false) {
+  const b = $cv('#cv-body'); if (!b) return;
+  if (force || b.scrollHeight - b.scrollTop - b.clientHeight < 120) b.scrollTop = b.scrollHeight;
+}
+
+function screen(mode, html) {
+  CV.mode = mode; CV.lastHtml = '';
+  $cv('#cv-body').innerHTML = `<div class="cv-screen">${html}</div>`;
+  $cv('#cv-in').hidden = true;
+}
+function showPair() {
+  screen('pair', `<div class="ico">📱</div><h3>Activer le chat sur cet iPhone</h3>
+    <p>Une seule fois : reçois un code en notification, tape-le, puis Face ID.</p>
+    <button class="btn soft" id="cv-req">Recevoir le code par notification</button>
+    <input id="cv-code" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+    <button class="btn" id="cv-pair">Activer avec Face ID</button><div class="err" id="cv-err"></div>`);
+  $cv('#cv-req').onclick = () => requestCode();
+  $cv('#cv-pair').onclick = () => pair($cv('#cv-code').value.trim());
+}
+function showLock(msg = '') {
+  screen('lock', `<div class="ico">🔒</div><h3>Face ID pour ouvrir la conversation</h3>
+    <p>Elle reste ouverte tant que tu écris, et se referme après 1 h sans message.</p>
+    <button class="btn" id="cv-unl">Ouvrir avec Face ID</button><div class="err" id="cv-err">${esc(msg)}</div>
+    <button class="link" id="cv-reco">Nouveau téléphone ? Le reconnecter</button>`);
+  $cv('#cv-unl').onclick = unlock;
+  $cv('#cv-reco').onclick = () => { forgetCred(); showPair(); };
+}
+function showCode() {
+  screen('code', `<div class="ico">🔑</div><h3>Choisis ton code</h3>
+    <p>Au moins 8 caractères (les majuscules ne comptent pas). Il remplace l'ancien sur tous tes appareils.</p>
+    <input id="cv-n1" type="password" autocomplete="new-password" placeholder="Nouveau code" style="letter-spacing:.05em;font-size:20px">
+    <input id="cv-n2" type="password" autocomplete="new-password" placeholder="Encore une fois" style="letter-spacing:.05em;font-size:20px">
+    <button class="btn" id="cv-save" style="margin-top:14px">Enregistrer le nouveau code</button><div class="err" id="cv-err"></div>`);
+  $cv('#cv-save').onclick = setCode;
+}
+async function setCode() {
+  const a = $cv('#cv-n1').value.trim(), b2 = $cv('#cv-n2').value.trim();
+  if (a.length < 8) { say('Au moins 8 caractères.'); return; }
+  if (a.toLowerCase() !== b2.toLowerCase()) { say('Les deux codes sont différents.'); return; }
+  const ss = session(); if (!ss) { showLock('Face ID d\'abord, puis recommence.'); return; }
+  const btn = $cv('#cv-save'); btn.disabled = true;
+  try {
+    // le code part chiffré avec une clé tirée du secret de session : seul le Mac peut le lire
+    const k = b64(ss.k), seed = new Uint8Array(5 + k.length); seed.set(new TextEncoder().encode('code:')); seed.set(k, 5);
+    const ck = await crypto.subtle.importKey('raw', await crypto.subtle.digest('SHA-256', seed), 'AES-GCM', false, ['encrypt']);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, ck, new TextEncoder().encode(a)));
+    const all = new Uint8Array(12 + ct.length); all.set(iv); all.set(ct, 12);
+    const env = { v: 1, kind: 'set-code', id: rid(), ts: Date.now(), enc: b64e(all), sid: ss.sid };
+    env.mac = await hmacOf(ss.k, [env.v, env.kind, env.id, env.ts, env.enc, env.sid]);
+    await sendEnv(env);
+    touchSession(env.ts);
+    say('Envoi au Mac…');
+    const box = { status: 'Envoyé' }; watch(env.id, box);
+    await until(() => box.codeSet || box.error, 45000);
+    if (box.codeSet) { store(KEY, a); CV.after = null; toast('Nouveau code enregistré'); closeChat(); }
+    else say(box.error || 'Le Mac ne répond pas : il doit être allumé et réveillé.');
+  } catch (e) { say(e.message || 'Pas envoyé'); }
+  finally { const b = $cv('#cv-save'); if (b) b.disabled = false; }
+}
+function messagesHtml() {
+  const hist = (CV.shop.chat || []).map((m) =>
+    m.role === 'user' ? `<div class="m me"><div class="b">${esc(m.text)}</div>${m.from === 'iphone' ? '<div class="st">iPhone</div>' : ''}</div>`
+    : m.role === 'assistant' ? `<div class="m ai"><div class="b md">${md(m.text)}</div></div>`
+    : m.role === 'error' ? `<div class="m err">${esc(m.text)}</div>` : `<div class="m note">${esc(m.text)}</div>`).join('');
+  const live = CV.local.map((x) => {
+    const b = CH.box.get(x.id) || {};
+    const waiting = !b.reply && !b.error;
+    return `<div class="m me"><div class="b">${esc(x.text)}</div></div>`
+      + (b.reply ? `<div class="m ai"><div class="b md">${md(b.reply)}</div></div>` : '')
+      + (b.error ? `<div class="m err">${esc(b.error)}</div>` : '')
+      + (waiting ? `<div class="m ai"><div class="b typing"><span class="dots"><i></i><i></i><i></i></span>${esc(b.status && b.status !== 'Envoyé' ? b.status : 'Envoi…')}</div></div>` : '');
+  }).join('');
+  if (CV.shop.id === 'diag') {
+    // un toucher = « Diagnostic du jour » envoyé ; cachée tant que Claude répond
+    const busy = diagBusy();   // même chat fermé puis rouvert : pas de 2e diagnostic tant que le 1er n'est pas arrivé
+    const chips = busy ? '' : `<div class="cv-chips"><button class="cv-chip" data-say="Diagnostic du jour"><span class="cl-ico"></span>Diagnostic du jour</button><button class="cv-chip soft" data-say="Qu'est-ce que je fais en premier ?">Quoi faire en premier ?</button></div>`;
+    return (hist + live || '<div class="m note">Claude fait le point sur toutes tes boutiques, d\'après la formation : ce qui marche, ce qui fuit, quoi faire et quand.</div>') + chips;
+  }
+  return hist + live || '<div class="m note">Donne une info ou pose une question : Claude met à jour et te répond.</div>';
+}
+/** Redessine selon l'état : activation, Face ID, ou conversation (seule la liste change : clavier et défilement gardés). */
+function drawChat(toEnd = false) {
+  if (!CV.el) return;
+  $cv('#cv-u').innerHTML = usageChip(CH.usage || S.data.usage);
+  if (!paired()) { if (CV.mode !== 'pair') showPair(); return; }
+  const refused = CV.local.find((x) => CH.box.get(x.id)?.relock);
+  if (refused) { CV.local = CV.local.filter((x) => x !== refused); CV.resend = refused.text; }
+  if (!session()) { if (CV.mode !== 'lock') showLock(CV.resend ? 'Ta session s\'est fermée : Face ID, et ton message repart tout seul.' : ''); return; }
+  if (CV.after === 'code') { if (CV.mode !== 'code') showCode(); return; }
+  if (CV.mode !== 'chat') { CV.mode = 'chat'; CV.lastHtml = ''; $cv('#cv-in').hidden = false; toEnd = true; putDraft(); }
+  const html = messagesHtml();
+  if (html === CV.lastHtml && !toEnd) return;
+  const body = $cv('#cv-body');
+  const near = body.scrollHeight - body.scrollTop - body.clientHeight < 120;
+  CV.lastHtml = html; body.innerHTML = html;
+  body.querySelectorAll('[data-say]').forEach((b) => (b.onclick = () => { const ta = $cv('#cv-ta'); if (!ta) return; ta.value = b.dataset.say; sendMsg(); }));
+  if (toEnd || near) body.scrollTop = body.scrollHeight;
+}
+/** Texte pré-rempli (« Répondre avec Claude », puces WhatsApp) : posé dans le champ, jamais envoyé tout seul. */
+function putDraft() {
+  const ta = $cv('#cv-ta'); if (!ta || !CV.draft) return;
+  ta.value = CV.draft; CV.draft = '';
+  ta.oninput?.();
+  try { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } catch {}
+}
+async function sendMsg() {
+  const ta = $cv('#cv-ta'), btn = $cv('#cv-send');
+  const text = ta.value.trim(); if (!text || CV.sending) return;
+  if (new TextEncoder().encode(text).length > MAX_BYTES) { toast('Message trop long : coupe-le en deux'); return; }
+  const ss = session();
+  if (!ss) { CV.resend = text; showLock('Plus d\'1 h sans message : Face ID, et ton message part tout seul.'); return; }
+  CV.sending = true; btn.disabled = true;
+  try {
+    const env = { v: 1, kind: 'msg', id: rid(), ts: Date.now(), shop: CV.shop.id, text, sid: ss.sid };
+    env.mac = await hmacOf(ss.k, [env.v, env.kind, env.id, env.ts, env.shop, env.text, env.sid]);   // signé par la session Face ID
+    await sendEnv(env);
+    touchSession(env.ts);
+    CV.local.push({ id: env.id, text });
+    ta.value = ''; ta.style.height = 'auto';
+    watch(env.id, { status: 'Envoyé', conv: CV.shop.id, text, ts: env.ts });
+    drawChat(true);
+  } catch (e) { toast(e.message || 'Pas envoyé'); }
+  finally { CV.sending = false; btn.disabled = !ta.value.trim(); }
+}
+/** Face ID → secret de session préparé à l'avance, chiffré pour le Mac seul. Appelé directement dans le toucher. */
+function unlock() {
+  if (session()) { drawChat(true); return; }
+  if (UNLOCKING) { say('Ouverture… attends la réponse du Mac.'); return; }
+  if (!PREP) { prepUnlock(); say('Une seconde… puis touche à nouveau.'); return; }
+  const p = PREP; PREP = null;
+  UNLOCKING = true;
+  const gen = ++UNLOCK_GEN;
+  const btn = $cv('#cv-unl'); if (btn) btn.disabled = true;
+  const env = { v: 1, kind: 'unlock', id: rid(), ts: Date.now(), epx: p.epx, epy: p.epy, enc: p.enc };
+  const challenge = sha(JSON.stringify([env.v, env.kind, env.id, env.ts, env.epx, env.epy, env.enc]));   // synchrone : Face ID part tout de suite
+  navigator.credentials.get({ publicKey: { challenge, rpId: RP, allowCredentials: [{ type: 'public-key', id: b64ud(myCred()) }], userVerification: 'required', timeout: 60000 } })
+    .then(async (a) => {
+      env.webauthn = { credId: myCred(), authenticatorData: b64ue(a.response.authenticatorData), clientDataJSON: b64ue(a.response.clientDataJSON), signature: b64ue(a.response.signature) };
+      say('Ouverture…');
+      await sendEnv(env);
+      const box = { status: 'Envoyé' }; watch(env.id, box);
+      await until(() => box.unlocked || box.error, 45000);
+      if (box.unlocked && gen === UNLOCK_GEN) {
+        store(SESS, JSON.stringify({ sid: box.unlocked, k: p.k, start: env.ts, last: env.ts }));
+        drawChat(true);
+        if (CV.resend && $cv('#cv-ta')) { $cv('#cv-ta').value = CV.resend; CV.resend = null; sendMsg(); }
+        else { toast('Conversation ouverte'); $cv('#cv-ta')?.focus(); }
+      }
+      else if (!box.unlocked) say(box.error || 'Le Mac ne répond pas : il doit être allumé et réveillé.');
+    })
+    .catch((e) => say(e?.name === 'NotAllowedError' ? 'Face ID annulé.' : (e.message || 'Ouverture impossible')))
+    .finally(() => { UNLOCKING = false; const b = $cv('#cv-unl'); if (b) b.disabled = false; prepUnlock(); });
+}
+const until = (fn, ms) => new Promise((resolve) => { const t0 = Date.now(); const tick = () => (fn() || Date.now() - t0 > ms ? resolve() : setTimeout(tick, 600)); tick(); });
+async function requestCode() {
+  try {
+    const env = { v: 1, kind: 'pair-request', id: rid(), ts: Date.now() };
+    await sendEnv(env);
+    say('Demande envoyée au Mac…');
+    const box = { status: 'Envoyé' }; watch(env.id, box);
+    await until(() => box.done, 45000);
+    say(box.status === 'Code envoyé en notification' ? 'Code envoyé : regarde tes notifications, puis tape-le ici.' : box.error || 'Le Mac ne répond pas : il doit être allumé, réveillé, avec Esteban Shopify ouvert.');
+  } catch (e) { say(e.message || 'Demande impossible'); }
+}
+function pair(code) {
+  if (!/^\d{6}$/.test(code)) { say('Tape les 6 chiffres du code.'); return; }
+  if (!window.PublicKeyCredential || !navigator.credentials?.create) { say('Face ID indisponible ici : ouvre la page dans Safari.'); return; }
+  const env = { v: 1, kind: 'pair', id: rid(), ts: Date.now(), code };
+  const challenge = sha(JSON.stringify([env.v, env.kind, env.id, env.ts, env.code]));   // synchrone : Face ID part tout de suite
+  navigator.credentials.create({ publicKey: {
+    rp: { id: RP, name: 'Esteban Shopify' }, user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'esteban', displayName: 'Esteban' },
+    challenge, pubKeyCredParams: [{ type: 'public-key', alg: -7 }], attestation: 'none', timeout: 60000,
+    authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'preferred' } } })
+    .then(async (c) => {
+      env.webauthn = { attestationObject: b64ue(c.response.attestationObject), clientDataJSON: b64ue(c.response.clientDataJSON) };
+      say('Envoi au Mac…');
+      await sendEnv(env);
+      const box = { status: 'Envoyé' }; watch(env.id, box);
+      const credId = b64ue(c.rawId);
+      await until(() => box.paired || box.error, 60000);
+      if (box.paired === credId) { store(CRED, credId); store(CRED + ':ok', JSON.stringify({ c: credId, at: box.pairedAt || Date.now() })); toast('Chat activé'); prepUnlock(); drawChat(true); }
+      else say(box.error || 'Le Mac ne répond pas : il doit être allumé, réveillé, avec Esteban Shopify ouvert.');
+    })
+    .catch((e) => say(e?.name === 'NotAllowedError' ? 'Face ID annulé.' : (e.message || 'Activation impossible')));
+}
+
+// ---------- code ----------
+function lock(msg = '') {
+  hideTabs();   // pas d'onglets sans le code
+  app.innerHTML = `<div class="lock"><h1>Esteban Shopify</h1><div class="muted">Lecture seule · tes boutiques</div>
+    <input id="code" type="password" autocomplete="current-password" placeholder="Code" autocapitalize="none" autocorrect="off" spellcheck="false">
+    <button class="btn" id="go">Ouvrir</button><div class="err" id="err">${esc(msg)}</div></div>`;
+  const open = async () => {
+    const code = document.getElementById('code').value; if (!code) return;
+    document.getElementById('err').textContent = '…';
+    try { S.data = await decrypt(await fetchBlob(), code); store(KEY, code); render(); }
+    catch { document.getElementById('err').textContent = 'Code incorrect.'; }
+  };
+  document.getElementById('go').onclick = open;
+  document.getElementById('code').onkeydown = (e) => { if (e.key === 'Enter') open(); };
+}
+async function refresh() {
+  const code = read(KEY); if (!code) return;
+  try { S.data = await decrypt(await fetchBlob(), code); render(); } catch {}
+}
+(async () => {
+  const code = read(KEY);
+  if (!code) return lock();
+  try { S.data = await decrypt(await fetchBlob(), code); render(); }
+  catch { lock('Le code a changé : tape le nouveau.'); }
+})();
+// Mise à jour de l'appli elle-même : si une nouvelle version est publiée, on recharge (plus besoin de la remettre sur l'écran d'accueil)
+async function checkUpdate() {
+  try {
+    const r = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!r.ok) return;
+    const v = await r.json();
+    if (!v.build || BUILD === '__BUILD__' || v.build === BUILD) return;
+    // une seule tentative par version (si le cache de GitHub sert encore l'ancienne page, pas de boucle)
+    let tried = null; try { tried = sessionStorage.getItem('cockpit-reload'); } catch {}
+    if (tried === v.build) return;
+    try { sessionStorage.setItem('cockpit-reload', v.build); } catch {}
+    location.replace(`${location.pathname}?v=${v.build}`);
+  } catch {}
+}
+checkUpdate();
+setInterval(() => { if (document.visibilityState === 'visible') { checkUpdate(); if (S.data) refresh(); } }, 120000);
+setInterval(() => {
+  const el = document.getElementById('upd'); if (el && S.data) el.textContent = `Mis à jour ${ago(S.data.generatedAt)}`;
+  // compte à rebours des lancements programmés, sans tout redessiner
+  document.querySelectorAll('[data-ltz]').forEach((x) => { const t = hmIn(x.dataset.ltz); if (t) x.textContent = t; });   // heure de chaque pays
+  document.querySelectorAll('[data-launch]').forEach((x) => { const t = launchText(x.dataset.launch, x.dataset.tz, Date.now(), x.dataset.short === '1'); if (t) x.textContent = t; });
+}, 30000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { checkUpdate(); if (S.data) refresh(); } });
+window.addEventListener('pageshow', (e) => { if (e.persisted) { checkUpdate(); if (S.data) refresh(); } });
+</script>
+</body>
+</html>
